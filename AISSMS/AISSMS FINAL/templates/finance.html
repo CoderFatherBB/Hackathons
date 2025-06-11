@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Financial Planning - CropGuard</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        /* Custom Styles */
+        .navbar {
+            background-color: #4CAF50;
+            padding: 10px 20px;
+        }
+
+        .navbar .navbar-brand {
+            color: white;
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+
+        .navbar .back-button {
+            color: white;
+            font-size: 1.2rem;
+            text-decoration: none;
+            margin-right: auto; /* Push to the left */
+        }
+
+        .navbar .header-title {
+            color: white;
+            font-size: 1.5rem;
+            margin: 0 auto; /* Center the title */
+        }
+
+        .analysis-content {
+            padding: 20px;
+            background-color: #f8f9fa;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            margin-top: 20px;
+        }
+
+        .analysis-section h4 {
+            color: #2E7D32;
+            margin-bottom: 1rem;
+        }
+
+        .analysis-section pre {
+            white-space: pre-wrap;
+            font-family: inherit;
+            background-color: #fff;
+            padding: 15px;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+        }
+
+        .card {
+            margin-bottom: 1rem;
+            border: none;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .card-header {
+            background-color: #4CAF50;
+            color: white;
+            font-weight: bold;
+        }
+
+        .card-body {
+            background-color: #fff;
+        }
+
+        .card-body ul {
+            list-style-type: disc;
+            padding-left: 20px;
+        }
+
+        .card-body ul li {
+            margin-bottom: 0.5rem;
+        }
+
+        .btn-primary {
+            background-color: #4CAF50;
+            border-color: #4CAF50;
+        }
+
+        .btn-primary:hover {
+            background-color: #45a049;
+            border-color: #45a049;
+        }
+
+        .crop-selection-section {
+            margin-top: 20px;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .form-check {
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-light">
+        <a href="/user_dashboard" class="back-button">
+            <i class="fas fa-arrow-left"></i> Back
+        </a>
+        <span class="header-title">Financial Planning</span>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="container mt-4">
+        <!-- Crop Selection Form -->
+        <div class="crop-selection-section">
+            <h3 class="h5">Select a Crop</h3>
+            <form id="cropSelectionForm">
+                <div class="form-check">
+                    <input class="form-check-input" type="radio" name="cropType" id="jowar" value="jowar" checked>
+                    <label class="form-check-label" for="jowar">Jowar</label>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input" type="radio" name="cropType" id="grape" value="grape">
+                    <label class="form-check-label" for="grape">Grape</label>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input" type="radio" name="cropType" id="sugarcane" value="sugarcane">
+                    <label class="form-check-label" for="sugarcane">Sugarcane</label>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input" type="radio" name="cropType" id="tomato" value="tomato">
+                    <label class="form-check-label" for="tomato">Tomato</label>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input" type="radio" name="cropType" id="apple" value="apple">
+                    <label class="form-check-label" for="apple">Apple</label>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input" type="radio" name="cropType" id="coconut" value="coconut">
+                    <label class="form-check-label" for="coconut">Coconut</label>
+                </div>
+                <button type="submit" class="btn btn-primary mt-3">Get Financial Analysis</button>
+            </form>
+        </div>
+
+        <!-- Analysis Results Section -->
+        <div class="analysis-section mt-4" id="analysisSection">
+            <h3 class="h5">Financial Analysis</h3>
+            <div id="analysisContent" class="analysis-content">
+                <!-- Analysis results will be displayed here -->
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const form = document.getElementById('cropSelectionForm');
+            const analysisContent = document.getElementById('analysisContent');
+
+            form.addEventListener('submit', function(event) {
+                event.preventDefault();
+
+                // Get selected crop
+                const selectedCrop = document.querySelector('input[name="cropType"]:checked').value;
+
+                // Get user's location
+                if (navigator.geolocation) {
+                    navigator.geolocation.getCurrentPosition(
+                        function(position) {
+                            const latitude = position.coords.latitude;
+                            const longitude = position.coords.longitude;
+
+                            // Fetch location name using reverse geocoding
+                            fetch(`https://api.openweathermap.org/geo/1.0/reverse?lat=${latitude}&lon=${longitude}&limit=1&appid=9cc32b17eb9445a7669256a9fddd9f01`)
+                                .then(response => response.json())
+                                .then(locationData => {
+                                    const locationName = locationData[0].name;
+
+                                    // Send data to the backend for analysis
+                                    fetch('/analyze_finance', {
+                                        method: 'POST',
+                                        headers: {
+                                            'Content-Type': 'application/json',
+                                        },
+                                        body: JSON.stringify({
+                                            location: locationName,
+                                            crop_type: selectedCrop,
+                                            land_size: 5.0,  // Example land size
+                                            budget: 500000.0,  // Example budget
+                                            land_type: "Black Soil"  // Example land type
+                                        }),
+                                    })
+                                    .then(response => response.json())
+                                    .then(data => {
+                                        if (data.error) {
+                                            analysisContent.innerHTML = `
+                                                <p class="text-danger"><strong>Error:</strong> ${data.error}</p>
+                                            `;
+                                        } else {
+                                            // Format and display analysis results
+                                            analysisContent.innerHTML = `
+                                                <h4>Financial Analysis for ${selectedCrop} in ${locationName}</h4>
+                                                <div class="card">
+                                                    <div class="card-header">Initial Assessment</div>
+                                                    <div class="card-body">
+                                                        <pre>${data.analysis.split("**Financial Planning**")[0]}</pre>
+                                                    </div>
+                                                </div>
+                                                <div class="card">
+                                                    <div class="card-header">Financial Planning</div>
+                                                    <div class="card-body">
+                                                        <pre>${data.analysis.split("**Financial Planning**")[1].split("**Technical Implementation Plan**")[0]}</pre>
+                                                    </div>
+                                                </div>
+                                                <div class="card">
+                                                    <div class="card-header">Technical Implementation Plan</div>
+                                                    <div class="card-body">
+                                                        <pre>${data.analysis.split("**Technical Implementation Plan**")[1].split("**Risk Assessment**")[0]}</pre>
+                                                    </div>
+                                                </div>
+                                                <div class="card">
+                                                    <div class="card-header">Risk Assessment</div>
+                                                    <div class="card-body">
+                                                        <pre>${data.analysis.split("**Risk Assessment**")[1]}</pre>
+                                                    </div>
+                                                </div>
+                                            `;
+                                        }
+                                    })
+                                    .catch(error => {
+                                        console.error('Error fetching analysis:', error);
+                                        analysisContent.innerHTML = `
+                                            <p class="text-danger"><strong>Error:</strong> Unable to fetch financial analysis.</p>
+                                        `;
+                                    });
+                                })
+                                .catch(error => {
+                                    console.error('Error fetching location:', error);
+                                    analysisContent.innerHTML = `
+                                        <p class="text-danger"><strong>Error:</strong> Unable to fetch location data.</p>
+                                    `;
+                                });
+                        },
+                        function(error) {
+                            console.error('Error fetching location:', error);
+                            analysisContent.innerHTML = `
+                                <p class="text-danger"><strong>Error:</strong> Location access denied.</p>
+                            `;
+                        }
+                    );
+                } else {
+                    analysisContent.innerHTML = `
+                        <p class="text-danger"><strong>Error:</strong> Geolocation is not supported by your browser.</p>
+                    `;
+                }
+            });
+        });
+    </script>
+</body>
+</html>

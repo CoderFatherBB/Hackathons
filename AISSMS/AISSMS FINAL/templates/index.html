@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CropGuard - Smart Disease Detection</title>
+    <link rel="stylesheet" href="/static/css/styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<style>
+
+.container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    padding: 20px;
+}
+
+.auth-card {
+    background: var(--white);
+    padding: 40px;
+    border-radius: 10px;
+    box-shadow: var(--shadow);
+    width: 100%;
+    max-width: 400px;
+}
+
+h1 {
+    color: var(--primary-green);
+    margin-bottom: 30px;
+    text-align: center;
+}
+
+input {
+    padding: 12px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 16px;
+    transition: border-color 0.3s ease;
+}
+
+input:focus {
+    outline: none;
+    border-color: var(--primary-green);
+}
+
+button {
+    background: var(--primary-green);
+    color: var(--white);
+    padding: 12px;
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background 0.3s ease;
+    width:100%
+}
+
+.info-section {
+    background-image: url('/static/images/op2.jpg'); /* Set the background image */
+    background-size: cover; /* Ensure the image covers the entire section */
+    background-position: center; /* Center the image */
+    position: relative; /* Ensure proper positioning for overlay */
+    height: 100vh; /* Set height to full viewport height */
+}
+</style>
+<body>
+    <div class="login-page">
+        <!-- Left Section with Login Form -->
+        <div class="login-section">
+            <div class="login-content">
+                <div class="brand">
+                    <div class="logo">
+                        <i class="fas fa-leaf"></i>
+                        <span>CropGuard</span>
+                    </div>
+                </div>
+
+
+            <div class="login-form-container">
+                <h1>Welcome Back!</h1>
+                <p class="subtitle">Login to access your crop disease detection dashboard</p>
+                <div class="input-group">
+                    <i class="fas fa-user"></i>
+                    <input type="text" id="username" placeholder="Username" required>
+                </div>
+                <div class="input-group">
+                    <i class="fas fa-lock"></i>
+                    <input type="password" id="password" placeholder="Password" required>
+                </div>
+                <a href="/user_dashboard"><button>Login</button></a>
+            </div>
+        </div>
+    </div>
+    <div class="info-section" >
+     
+        <div class="overlay" ></div>
+        <div class="info-content">
+            <h2>Protect Your Crops with AI-Powered Disease Detection</h2>
+            <div class="features">
+                <div class="feature-item">
+                    <i class="fas fa-microscope"></i>
+                    <div class="feature-text">
+                        <h3>Instant Analysis</h3>
+                        <p>Get real-time disease detection results with 98% accuracy</p>
+                    </div>
+                </div>
+                <div class="feature-item">
+                    <i class="fas fa-history"></i>
+                    <div class="feature-text">
+                        <h3>Track Progress</h3>
+                        <p>Monitor crop health history and treatment effectiveness</p>
+                    </div>
+                </div>
+                <div class="feature-item">
+                    <i class="fas fa-mobile-alt"></i>
+                    <div class="feature-text">
+                        <h3>Mobile Ready</h3>
+                        <p>Access your dashboard anytime, anywhere</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

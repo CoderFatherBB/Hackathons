@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Government Schemes and Tutorials</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #4CAF50;
+            --secondary-color: #2E7D32;
+            --light-gray: #f5f6fa;
+            --text-dark: #2C3E50;
+            --text-light: #7F8C8D;
+            --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            --transition: all 0.3s ease;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            line-height: 1.6;
+            background-color: var(--light-gray);
+            color: var(--text-dark);
+            margin: 0;
+            padding: 0;
+        }
+        
+        .page-header {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            padding: 1.5rem 0;
+            margin-bottom: 2rem;
+            position: relative;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 1rem;
+            position: relative;
+        }
+        
+        .header-content {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+        
+        .back-button {
+            position: absolute;
+            left: 1rem;
+            color: white;
+            text-decoration: none;
+            padding: 0.8rem 1.2rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: var(--transition);
+            white-space: nowrap;
+            background-color: rgba(255, 255, 255, 0.2);
+            border-radius: 8px;
+            backdrop-filter: blur(5px);
+        }
+        
+        .back-button:hover {
+            transform: translateX(-5px);
+            background-color: rgba(255, 255, 255, 0.3);
+        }
+        
+        .back-button i {
+            margin-right: 0.5rem;
+        }
+        
+        h1 {
+            color: white;
+            margin: 0;
+            font-weight: 600;
+            font-size: 1.8rem;
+            text-align: center;
+        }
+        
+        form {
+            max-width: 600px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+            display: flex;
+            gap: 1rem;
+        }
+        
+        input[type="text"] {
+            flex: 1;
+            padding: 0.8rem 1.2rem;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: var(--transition);
+        }
+        
+        input[type="text"]:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.2);
+        }
+        
+        button {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 0.8rem 2rem;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: var(--transition);
+        }
+        
+        button:hover {
+            background-color: var(--secondary-color);
+            transform: translateY(-2px);
+        }
+        
+        h2 {
+            text-align: center;
+            color: var(--text-dark);
+            margin: 3rem 0 2rem;
+            font-weight: 600;
+        }
+        
+        .youtube-results, .schemes-results {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 1rem;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+        
+        .video-preview, .scheme {
+            background: white;
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+        }
+        
+        .video-preview:hover, .scheme:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+        }
+        
+        .video-preview h3, .scheme h3 {
+            color: var(--text-dark);
+            margin-top: 0;
+            font-size: 1.25rem;
+            margin-bottom: 1rem;
+        }
+        
+        .video-preview p, .scheme p {
+            color: var(--text-light);
+            margin-bottom: 1.5rem;
+        }
+        
+        .video-preview iframe {
+            width: 100%;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+        }
+        
+        .scheme a {
+            display: inline-block;
+            color: var(--primary-color);
+            text-decoration: none;
+            font-weight: 500;
+            padding: 0.5rem 0;
+            transition: var(--transition);
+        }
+        
+        .scheme a:hover {
+            color: var(--secondary-color);
+            transform: translateX(5px);
+        }
+        
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+                gap: 1rem;
+            }
+        
+            .back-button {
+                position: static;
+                margin-bottom: 1rem;
+            }
+        
+            h1 {
+                font-size: 1.5rem;
+            }
+        
+            form {
+                flex-direction: column;
+            }
+            
+            button {
+                width: 100%;
+            }
+            
+            .youtube-results, .schemes-results {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="page-header">
+        <div class="container">
+            <div class="header-content">
+                <a href="/user_dashboard" class="back-button">
+                    <i class="fas fa-arrow-left"></i>  Back
+                </a>
+                <h1>Search for Information</h1>
+            </div>
+        </div>
+    </div>
+    <form method="POST">
+        <input type="text" name="user_input" placeholder="Enter your query" required>
+        <button type="submit">Search</button>
+    </form>
+    {% if schemes_links %}
+    <h2>Government Schemes</h2>
+    <div class="schemes-results">
+        {% for scheme in schemes_links %}
+        <div class="scheme">
+            <h3>{{ scheme.title }}</h3>
+            <p>{{ scheme.description }}</p>
+            <a href="{{ scheme.link }}" target="_blank">Learn More</a>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    {% if youtube_data %}
+    <h2>YouTube Videos</h2>
+    <div class="youtube-results">
+        {% for link, video_id in youtube_data %}
+        <div class="video-preview">
+            <h3>{{ link.title }}</h3>
+            <p>{{ link.description }}</p>
+            {% if video_id %}
+            <iframe
+                width="560"
+                height="315"
+                src="https://www.youtube.com/embed/{{ video_id }}"
+                frameborder="0"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowfullscreen>
+            </iframe>
+            {% else %}
+            <p>Unable to embed video. <a href="{{ link.link }}" target="_blank">Watch on YouTube</a></p>
+            {% endif %}
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+</body>
+</html>
+

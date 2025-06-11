@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Coconut Analysis - CropGuard</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #4CAF50;
+            --secondary-color: #2E7D32;
+        }
+
+        body {
+            position: relative;
+            margin: 0;
+            padding: 0;
+        }
+        
+        body::before {
+            content: "";
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('https://wallpaperaccess.com/full/1598228.jpg');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            filter: blur(8px);
+            z-index: -1;
+        }
+
+        .navbar-brand i {
+            color: var(--primary-color);
+            margin-right: 0.5rem;
+        }
+
+        .nav-link.active {
+            color: var(--primary-color) !important;
+            font-weight: 500;
+        }
+
+        .main-content {
+            padding: 2rem;
+        }
+
+        .upload-section {
+            background: white;
+            padding: 2rem;
+            border-radius: 1rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .upload-box {
+            border: 2px dashed var(--primary-color);
+            border-radius: 0.5rem;
+            padding: 2rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .upload-box:hover {
+            background-color: rgba(76, 175, 80, 0.1);
+        }
+
+        .preview-section {
+            background: white;
+            padding: 2rem;
+            border-radius: 1rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            display: none;
+        }
+
+        .preview-image {
+            max-width: 100%;
+            max-height: 400px;
+            margin-bottom: 1rem;
+        }
+
+        .analysis-result {
+            background: #f8f9fa;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            margin-top: 1rem;
+        }
+        .products-section {
+            background: #f8f9fa;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            margin-top: 2rem;
+        }
+        
+        .products-section .card {
+            border: none;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            transition: transform 0.2s ease;
+        }
+        
+        .products-section .card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .products-section .card-title a {
+            color: var(--primary-color);
+            text-decoration: none;
+        }
+        
+        .products-section .card-title a:hover {
+            text-decoration: underline;
+        }
+        
+        .products-section .card-text {
+            font-size: 0.9rem;
+        }
+        
+        .products-section .card-img-top {
+            border-radius: 0.5rem 0.5rem 0 0;
+        }
+    </style>
+</head>
+<body>
+    <!-- Bootstrap Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-light  ">
+        <div class="container">
+            <a class="navbar-brand d-flex align-items-center" href="/user_dashboard">
+                <i class="fas fa-leaf fa-lg"></i>
+                <span class="ms-2">CropGuard</span>
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="/user_dashboard">
+                            <i class="fas fa-home me-1"></i>Crop Info
+                        </a>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link" href="#" id="cropsDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="fas fa-seedling me-1"></i>Crops
+                            <i class="fas fa-caret-down"></i>
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="cropsDropdown">
+                            <li><a class="dropdown-item" href="/apple"><i class="fas fa-seedling me-2"></i>Apple</a></li>
+                            <li><a class="dropdown-item" href="/coconut"><i class="fas fa-seedling me-2"></i>Coconut</a></li>
+                            <li><a class="dropdown-item" href="/sugarcane"><i class="fas fa-seedling me-2"></i>Sugarcane</a></li>
+                            <li><a class="dropdown-item" href="/grape"><i class="fas fa-seedling me-2"></i>Grapes</a></li>
+                            <li><a class="dropdown-item" href="/tomato"><i class="fas fa-seedling me-2"></i>Tomato</a></li>
+                            <li><a class="dropdown-item" href="/jowar"><i class="fas fa-seedling me-2"></i>Jowar</a></li>
+            
+                        </ul>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/finance">
+                            <i class="fas fa-money-bill"></i>Financial Planning
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/news">
+                            <i class="fas fa-history me-1"></i>News
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/chatbot">
+                            <i class="fas fa-comments me-1"></i>Chat Assistance
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/marketplace">
+                            <i class="fas fa-search-dollar"></i>Marketplace
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/about">
+                            <i class="fas fa-info-circle me-1"></i>About Us
+                        </a>
+                    </li>
+                   
+                </ul>
+                <div class="translate-wrapper">
+                    <i class="fas fa-globe"></i>
+                    <div id="google_translate_element"></div>
+                </div>
+                <div class="d-flex">
+                    <div class="dropdown">
+                        <a class="dropdown-item" href="/logout"><i class="fas fa-sign-out-alt me-2"></i>Logout</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+
+    <!-- Main Content -->
+    <div class="container main-content">
+        <div class="row mb-4">
+            <div class="col">
+                <h1 class="h2">Coconut Analysis</h1>
+                <p class="text-muted">Upload images of coconut leaves for detailed analysis</p>
+            </div>
+        </div>
+
+        <div class="upload-section">
+            <h2 class="h4 mb-3">Upload Image</h2>
+            <div class="upload-box" onclick="document.getElementById('fileInput').click()">
+                <i class="fas fa-cloud-upload-alt fa-3x mb-3" style="color: var(--primary-color)"></i>
+                <p class="mb-0">Click or drag and drop your image here</p>
+                <small class="text-muted d-block mt-2">Supported formats: JPG, PNG (Max size: 5MB)</small>
+                <input type="file" id="fileInput" hidden accept="image/*">
+            </div>
+        </div>
+
+        <div class="preview-section" id="previewSection">
+            <h2 class="h4 mb-3">Image Analysis</h2>
+            <div class="row">
+                <div class="col-md-6">
+                    <img id="previewImage" class="preview-image" src="" alt="Preview">
+                </div>
+                <div class="col-md-6">
+                    <div class="analysis-result">
+                        <h3 class="h5">Analysis Results</h3>
+                        <div id="analysisContent">
+                            <!-- Analysis results will be displayed here -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="youtube-tutorials mt-4" id="youtubeTutorials">
+            <h3 class="h5">YouTube Tutorials</h3>
+            <div id="youtubeContent" class="row">
+                <!-- YouTube previews and titles will be displayed here -->
+            </div>
+        </div>
+        <div class="products-section mt-4" id="productsSection">
+            <h3 class="h5">Recommended Products</h3>
+            <div id="productsContent" class="row">
+                <!-- Product cards will be displayed here -->
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
+    <script>
+        const fileInput = document.getElementById('fileInput');
+        const previewSection = document.getElementById('previewSection');
+        const previewImage = document.getElementById('previewImage');
+        const analysisContent = document.getElementById('analysisContent');
+
+        fileInput.addEventListener('change', function (e) {
+            if (e.target.files.length > 0) {
+                const file = e.target.files[0];
+                
+                // Show preview
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    previewImage.src = e.target.result;
+                    previewSection.style.display = 'block';
+                    
+                    // Show loading indicator
+                    analysisContent.innerHTML = `
+                        <div class="d-flex align-items-center mb-3">
+                            <div class="spinner-border text-success me-2" role="status">
+                                <span class="visually-hidden">Analyzing...</span>
+                            </div>
+                            <span>Analyzing image...</span>
+                        </div>
+                    `;
+        
+                    // Prepare form data for upload
+                    const formData = new FormData();
+                    formData.append('image', file);
+        
+                    // Send file to the server for analysis
+                    fetch('/detectc', {
+                        method: 'POST',
+                        body: formData
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.error) {
+                            analysisContent.innerHTML = `
+                                <p class="text-danger"><strong>Error:</strong> ${data.error}</p>
+                            `;
+                        } else {
+                            const resultText = data.result;
+                            const botResponse = data.bot_response || "No recommendations available.";
+                            
+                            // Display analysis results
+                            analysisContent.innerHTML = `
+                                <p class="mb-2"><strong>Result:</strong> ${resultText}</p>
+                                <p class="mb-2"><strong>Chatbot Recommendation:</strong> ${botResponse}</p>
+                            `;
+        
+                            // Display YouTube tutorials if available
+                            const youtubeContent = document.getElementById('youtubeContent');
+                            youtubeContent.innerHTML = ''; // Clear previous content
+        
+                            if (data.youtube_data && data.youtube_data.length > 0) {
+                                data.youtube_data.forEach(video => {
+                                    const videoHtml = `
+                                        <div class="col-md-6 mb-4">
+                                            <div class="card">
+                                                <div class="card-body">
+                                                    <h5 class="card-title">
+                                                        <a href="${video.link}" target="_blank">${video.title}</a>
+                                                    </h5>
+                                                    <div class="ratio ratio-16x9">
+                                                        <iframe src="https://www.youtube.com/embed/${video.video_id}" 
+                                                                title="YouTube video player" 
+                                                                frameborder="0" 
+                                                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                                                                allowfullscreen>
+                                                        </iframe>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    `;
+                                    youtubeContent.insertAdjacentHTML('beforeend', videoHtml);
+                                });
+                            } else {
+                                youtubeContent.innerHTML = '<p>No YouTube tutorials available.</p>';
+                            }
+        
+                            // Display products if available
+                            const productsContent = document.getElementById('productsContent');
+                            productsContent.innerHTML = ''; // Clear previous content
+        
+                            if (data.products && data.products.length > 0) {
+                                data.products.forEach(product => {
+                                    const productHtml = `
+                                        <div class="col-md-4 mb-4">
+                                            <div class="card h-100">
+                                                <img src="${product.image}" class="card-img-top" alt="${product.title}" style="height: 200px; object-fit: cover;">
+                                                <div class="card-body">
+                                                    <h5 class="card-title">
+                                                        <a href="${product.link}" target="_blank">${product.title}</a>
+                                                    </h5>
+                                                    <p class="card-text"><strong>Price:</strong> ${product.price}</p>
+                                                    <p class="card-text"><small class="text-muted">Source: ${product.source}</small></p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    `;
+                                    productsContent.insertAdjacentHTML('beforeend', productHtml);
+                                });
+                            } else {
+                                productsContent.innerHTML = '<p>No products found.</p>';
+                            }
+                        }
+                    })
+                    .catch(error => {
+                        analysisContent.innerHTML = `
+                            <p class="text-danger"><strong>Error:</strong> Unable to analyze the image. Please try again.</p>
+                        `;
+                    });
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sunlight Intensity Measurement</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin-top: 50px;
+        }
+        #lightIntensity {
+            font-size: 24px;
+            font-weight: bold;
+            margin-top: 20px;
+        }
+        #gauge {
+            width: 100%;
+            height: 20px;
+            background: linear-gradient(to right, green, yellow, red);
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Sunlight Intensity Measurement</h1>
+    <p>Place your device in the sunlight to measure the intensity.</p>
+    <div id="lightIntensity">Light Intensity: -- lux</div>
+    <div id="gauge"></div>
+    <button onclick="calibrate()">Calibrate</button>
+    <button onclick="saveData()">Save Data</button>
+
+    <script>
+        let calibrationOffset = 0;
+
+        if ('AmbientLightSensor' in window) {
+            const sensor = new AmbientLightSensor();
+
+            sensor.addEventListener('reading', () => {
+                const lightIntensity = sensor.illuminance + calibrationOffset;
+
+                // Display light intensity
+                const lightIntensityElement = document.getElementById("lightIntensity");
+                lightIntensityElement.textContent = `Light Intensity: ${lightIntensity.toFixed(2)} lux`;
+
+                // Provide recommendations
+                if (lightIntensity > 10000) {
+                    lightIntensityElement.textContent += "\nRecommendation: High sunlight. Suitable for crops like wheat and rice.";
+                } else if (lightIntensity > 5000) {
+                    lightIntensityElement.textContent += "\nRecommendation: Moderate sunlight. Suitable for crops like corn and tomatoes.";
+                } else {
+                    lightIntensityElement.textContent += "\nRecommendation: Low sunlight. Suitable for shade-tolerant crops like spinach and lettuce.";
+                }
+
+                // Update gauge
+                updateGauge(lightIntensity);
+            });
+
+            sensor.start();
+        } else {
+            alert("Sorry, your device does not support the Ambient Light Sensor API.");
+        }
+
+        function calibrate() {
+            const lightIntensityElement = document.getElementById("lightIntensity");
+            const lightIntensity = parseFloat(lightIntensityElement.textContent.split(" ")[2]);
+            calibrationOffset = -lightIntensity;
+        }
+
+        function saveData() {
+            const lightIntensity = document.getElementById("lightIntensity").textContent;
+            const blob = new Blob([lightIntensity], { type: "text/plain" });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement("a");
+            a.href = url;
+            a.download = "light_intensity_measurement.txt";
+            a.click();
+        }
+
+        function updateGauge(lightIntensity) {
+            const gauge = document.getElementById("gauge");
+            gauge.style.backgroundPosition = `${(lightIntensity / 20000) * 100}%`;
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script type="text/javascript">
+        // Create a promise to track Google Translate script loading
+        let googleTranslateScriptPromise = null;
+    
+        function loadGoogleTranslateScript() {
+            if (!googleTranslateScriptPromise) {
+                googleTranslateScriptPromise = new Promise((resolve, reject) => {
+                    const script = document.createElement('script');
+                    script.src = '//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit';
+                    script.async = true;
+                    script.defer = true;
+                    
+                    script.onload = () => {
+                        // Small delay to ensure the API is fully loaded
+                        setTimeout(resolve, 100);
+                    };
+                    script.onerror = reject;
+                    
+                    document.head.appendChild(script);
+                });
+            }
+            return googleTranslateScriptPromise;
+        }
+    
+        // Modified initialization function
+        function googleTranslateElementInit() {
+            // Check if the element exists
+            const translateElement = document.getElementById('google_translate_element');
+            if (!translateElement) return;
+    
+            // Check if translate widget is already initialized
+            if (translateElement.childNodes.length > 0) return;
+    
+            new google.translate.TranslateElement(
+                {
+                    pageLanguage: 'en',
+                    includedLanguages: 'en,hi,mr',
+                    layout: google.translate.TranslateElement.InlineLayout.SIMPLE,
+                    autoDisplay: false,
+                },
+                'google_translate_element'
+            );
+    
+            // Initialize language preference handling
+            storeLanguagePreference();
+        }
+    
+        // Modified storage function with error handling
+        function storeLanguagePreference() {
+            try {
+                const select = document.querySelector('.goog-te-combo');
+                if (select) {
+                    // Get stored preference
+                    const storedLang = localStorage.getItem('preferred-language');
+                    if (storedLang) {
+                        select.value = storedLang;
+                        // Trigger change event to apply the stored language
+                        const event = new Event('change');
+                        select.dispatchEvent(event);
+                    }
+    
+                    select.addEventListener('change', function() {
+                        try {
+                            localStorage.setItem('preferred-language', this.value);
+                        } catch (e) {
+                            console.error('Error storing language preference:', e);
+                        }
+                    });
+                }
+            } catch (e) {
+                console.error('Error in storeLanguagePreference:', e);
+            }
+        }
+    
+        // Function to initialize translation
+        function initializeTranslation() {
+            // Load jQuery first (if not already loaded)
+            if (typeof jQuery === 'undefined') {
+                const jqueryScript = document.createElement('script');
+                jqueryScript.src = 'https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js';
+                jqueryScript.onload = () => loadGoogleTranslateScript();
+                document.head.appendChild(jqueryScript);
+            } else {
+                loadGoogleTranslateScript();
+            }
+        }
+    
+        // Call initialization when DOM is ready
+        document.addEventListener('DOMContentLoaded', initializeTranslation);
+    
+        // Backup initialization for cases where DOMContentLoaded might have already fired
+        if (document.readyState === 'complete' || document.readyState === 'interactive') {
+            initializeTranslation();
+        }
+    </script> 
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CropGuard Assistant</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            position: relative;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            margin: 0;
+        }
+        
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('https://wallpaperaccess.com/full/1598228.jpg');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            filter: blur(8px); /* Applies the blur to the background */
+            z-index: -1; /* Ensures it stays behind all content */
+        }
+        .back-button {
+            position: absolute;
+            top: 1rem;
+            left: 1rem;
+            background-color: white;
+            color: #4CAF50;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            cursor: pointer;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            z-index: 1000;
+        }
+
+        .back-button:hover {
+            transform: translateX(-3px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+        }
+
+        .chat-container {
+            margin: auto;
+            width: 90%;
+            max-width: 800px;
+            background: white;
+            border-radius: 25px;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
+            display: flex;
+            flex-direction: column;
+            height: 90vh;
+            overflow: hidden;
+        }
+
+        .chat-header {
+            padding: 1.5rem;
+            background: linear-gradient(135deg, #4CAF50, #45a049);
+            color: white;
+            border-radius: 25px 25px 0 0;
+            text-align: center;
+            font-size: 1.3rem;
+            font-weight: 600;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .chat-messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            background-color: #fafafa;
+        }
+
+        .message {
+            padding: 1rem;
+            border-radius: 20px;
+            max-width: 75%;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+            animation: fadeIn 0.3s ease-in-out;
+        }
+        /* Updated translation-related styles */
+        .goog-te-banner-frame.skiptranslate {
+            display: none !important;
+        }
+        
+        .goog-te-gadget {
+            font-family: inherit !important;
+            color: transparent !important;
+        }
+        
+        .goog-te-gadget .goog-te-combo {
+            appearance: none;
+            -webkit-appearance: none;
+            padding: 8px 30px 8px 12px;
+            border-radius: 6px;
+            border: 1px solid #e0e0e0;
+            color: #333;
+            background: white;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s ease;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%234CAF50' viewBox='0 0 16 16'%3E%3Cpath d='M7.247 11.14L2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: calc(100% - 8px) center;
+            min-width: 160px;
+        }
+        
+        .goog-te-gadget .goog-te-combo:hover {
+            border-color: var(--primary-color);
+            box-shadow: 0 2px 4px rgba(76, 175, 80, 0.1);
+        }
+        
+        .goog-te-gadget .goog-te-combo:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.2);
+        }
+
+        .translate-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 4px 8px;
+            border-radius: 6px;
+            background: rgba(76, 175, 80, 0.1);
+            margin-right: 1rem;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .bot-message {
+            background-color: white;
+            align-self: flex-start;
+            border-bottom-left-radius: 5px;
+        }
+
+        .user-message {
+            background: linear-gradient(135deg, #4CAF50, #45a049);
+            color: white;
+            align-self: flex-end;
+            border-bottom-right-radius: 5px;
+        }
+
+        .chat-input-container {
+            display: flex;
+            padding: 1.5rem;
+            gap: 1rem;
+            background-color: white;
+            border-top: 1px solid #eee;
+        }
+
+        .chat-input {
+            flex: 1;
+            padding: 1rem 1.5rem;
+            border: 2px solid #e0e0e0;
+            border-radius: 25px;
+            outline: none;
+            transition: all 0.3s ease;
+            font-size: 1rem;
+        }
+
+        .chat-input:focus {
+            border-color: #4CAF50;
+            box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.1);
+        }
+
+        .send-button {
+            background: linear-gradient(135deg, #4CAF50, #45a049);
+            color: white;
+            border: none;
+            padding: 1rem;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .send-button:hover {
+            transform: scale(1.05);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Custom scrollbar */
+        .chat-messages::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .chat-messages::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 4px;
+        }
+
+        .chat-messages::-webkit-scrollbar-thumb {
+            background: #c1c1c1;
+            border-radius: 4px;
+        }
+
+        .chat-messages::-webkit-scrollbar-thumb:hover {
+            background: #a8a8a8;
+        }
+    </style>
+</head>
+<body>
+    <button class="back-button" onclick="window.location.href='/user_dashboard'">
+        <i class="fas fa-arrow-left"></i> Back
+    </button>
+    
+    <div class="chat-container">
+        <div class="chat-header">
+            <i class="fas fa-robot me-2"></i>CropGuard Assistant
+            <div class="translate-wrapper">
+                <i class="fas fa-globe"></i>
+                <div id="google_translate_element"></div>
+            </div>
+        </div>
+        <div class="chat-messages" id="chatMessages">
+            <div class="message bot-message">
+                Hello! How can I assist you with your crops today?
+            </div>
+        </div>
+        <div class="chat-input-container">
+            <input type="text" id="chatInput" class="chat-input" placeholder="Type your message...">
+            <button id="sendMessage" class="send-button">
+                <i class="fas fa-paper-plane"></i>
+            </button>
+        </div>
+    </div>
+
+    <script>
+        
+        // Google Translate initialization
+        function googleTranslateElementInit() {
+            new google.translate.TranslateElement(
+                {
+                    pageLanguage: 'en',
+                    includedLanguages: 'en,hi,mr', // English, Hindi, Marathi
+                    layout: google.translate.TranslateElement.InlineLayout.SIMPLE,
+                    autoDisplay: false,
+                },
+                'google_translate_element'
+            );
+        }
+
+        // Store language preference
+        function storeLanguagePreference() {
+            const select = document.querySelector('.goog-te-combo');
+            if (select) {
+                select.addEventListener('change', function() {
+                    localStorage.setItem('preferred-language', this.value);
+                });
+            }
+        }
+
+
+
+        const chatInput = document.getElementById('chatInput');
+        const sendMessage = document.getElementById('sendMessage');
+        const chatMessages = document.getElementById('chatMessages');
+    
+        async function handleMessage() {
+            const message = chatInput.value.trim();
+            if (message) {
+                // Add user message
+                addMessage(message, true);
+    
+                try {
+                    // Send to server
+                    const response = await fetch('/chatbot', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({ message: message }),
+                    });
+    
+                    const data = await response.json();
+    
+                    // Add bot response (HTML formatted)
+                    addMessage(data.response, false, true);
+                } catch (error) {
+                    console.error('Error:', error);
+                    addMessage('Sorry, I encountered an error. Please try again.', false);
+                }
+                // Clear input after sending
+                chatInput.value = '';
+            }
+        }
+    
+        function addMessage(message, isUser = false, isHTML = false) {
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${isUser ? 'user-message' : 'bot-message'}`;
+    
+            // Allow inner HTML for bot responses
+            if (isHTML && !isUser) {
+                messageDiv.innerHTML = message;
+            } else {
+                messageDiv.textContent = message;
+            }
+    
+            chatMessages.appendChild(messageDiv);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+    
+        sendMessage.addEventListener('click', handleMessage);
+        chatInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                handleMessage();
+            }
+        });
+    </script>    
+</body>
+</html>

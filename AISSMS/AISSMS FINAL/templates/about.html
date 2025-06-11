@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <script type="text/javascript">
+        // Create a promise to track Google Translate script loading
+        let googleTranslateScriptPromise = null;
+    
+        function loadGoogleTranslateScript() {
+            if (!googleTranslateScriptPromise) {
+                googleTranslateScriptPromise = new Promise((resolve, reject) => {
+                    const script = document.createElement('script');
+                    script.src = '//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit';
+                    script.async = true;
+                    script.defer = true;
+                    
+                    script.onload = () => {
+                        // Small delay to ensure the API is fully loaded
+                        setTimeout(resolve, 100);
+                    };
+                    script.onerror = reject;
+                    
+                    document.head.appendChild(script);
+                });
+            }
+            return googleTranslateScriptPromise;
+        }
+    
+        // Modified initialization function
+        function googleTranslateElementInit() {
+            // Check if the element exists
+            const translateElement = document.getElementById('google_translate_element');
+            if (!translateElement) return;
+    
+            // Check if translate widget is already initialized
+            if (translateElement.childNodes.length > 0) return;
+    
+            new google.translate.TranslateElement(
+                {
+                    pageLanguage: 'en',
+                    includedLanguages: 'en,hi,mr',
+                    layout: google.translate.TranslateElement.InlineLayout.SIMPLE,
+                    autoDisplay: false,
+                },
+                'google_translate_element'
+            );
+    
+            // Initialize language preference handling
+            storeLanguagePreference();
+        }
+    
+        // Modified storage function with error handling
+        function storeLanguagePreference() {
+            try {
+                const select = document.querySelector('.goog-te-combo');
+                if (select) {
+                    // Get stored preference
+                    const storedLang = localStorage.getItem('preferred-language');
+                    if (storedLang) {
+                        select.value = storedLang;
+                        // Trigger change event to apply the stored language
+                        const event = new Event('change');
+                        select.dispatchEvent(event);
+                    }
+    
+                    select.addEventListener('change', function() {
+                        try {
+                            localStorage.setItem('preferred-language', this.value);
+                        } catch (e) {
+                            console.error('Error storing language preference:', e);
+                        }
+                    });
+                }
+            } catch (e) {
+                console.error('Error in storeLanguagePreference:', e);
+            }
+        }
+    
+        // Function to initialize translation
+        function initializeTranslation() {
+            // Load jQuery first (if not already loaded)
+            if (typeof jQuery === 'undefined') {
+                const jqueryScript = document.createElement('script');
+                jqueryScript.src = 'https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js';
+                jqueryScript.onload = () => loadGoogleTranslateScript();
+                document.head.appendChild(jqueryScript);
+            } else {
+                loadGoogleTranslateScript();
+            }
+        }
+    
+        // Call initialization when DOM is ready
+        document.addEventListener('DOMContentLoaded', initializeTranslation);
+    
+        // Backup initialization for cases where DOMContentLoaded might have already fired
+        if (document.readyState === 'complete' || document.readyState === 'interactive') {
+            initializeTranslation();
+        }
+    </script> 
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About Us - CropGuard</title>
+     
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #4CAF50;
+            --secondary-color: #2E7D32;
+            --accent-color: #81C784;
+        }
+        body {
+            position: relative;
+            margin: 0;
+            padding: 0;
+            /* Ensures no scrolling issues */
+        }
+
+        .navbar-brand i {
+            color: var(--primary-color);
+            margin-right: 0.5rem;
+        }
+
+        .nav-link.active {
+            color: var(--primary-color) !important;
+            font-weight: 500;
+        }
+
+        .main-content {
+            padding: 2rem;
+        }
+        .hero-section {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            padding: 6rem 0;
+            margin-bottom: 4rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('/api/placeholder/1200/400') center/cover;
+            opacity: 0.1;
+        }
+
+        .mission-section {
+            background: white;
+            padding: 4rem 0;
+            margin-bottom: 4rem;
+            border-radius: 20px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .feature-card {
+            background: white;
+            border-radius: 15px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .feature-icon {
+            font-size: 2.5rem;
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+        }
+
+        .team-section {
+            padding: 4rem 0;
+        }
+        .team-section {
+            background-color: #f8f9fa;
+            padding: 80px 0;
+        }
+    
+        .team-card {
+            background: white;
+            border-radius: 15px;
+            padding: 2rem;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+    
+        .team-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+        }
+    
+        .team-avatar img {
+            border: 4px solid #fff;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
+        }
+    
+        .team-card:hover .team-avatar img {
+            transform: scale(1.05);
+        }
+    
+        .social-links a {
+            color: #4CAF50;
+            transition: color 0.3s ease, transform 0.3s ease;
+            display: inline-block;
+        }
+    
+        .social-links a:hover {
+            color: #2E7D32;
+            transform: translateY(-2px);
+        }
+    
+        @media (max-width: 768px) {
+            .col-md-3 {
+                margin-bottom: 2rem;
+            }
+        }
+        .team-card {
+            background: white;
+            border-radius: 15px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            text-align: center;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
+        }
+
+        .team-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .team-avatar {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            margin: 0 auto 1.5rem;
+            background: var(--accent-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .team-avatar i {
+            font-size: 4rem;
+            color: white;
+        }
+
+        .social-links {
+            margin-top: 1rem;
+        }
+
+        .social-links a {
+            color: var(--secondary-color);
+            margin: 0 0.5rem;
+            font-size: 1.2rem;
+            transition: color 0.3s ease;
+        }
+
+        .social-links a:hover {
+            color: var(--primary-color);
+        }
+        
+    </style>
+</head>
+<body>
+    <!-- Navbar -->
+<!-- Bootstrap Navbar (Same as before) -->
+<nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm">
+    <div class="container">
+        <a class="navbar-brand d-flex align-items-center" href="/user_dashboard">
+            <i class="fas fa-leaf fa-lg"></i>
+            <span class="ms-2">CropGuard</span>
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav me-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="/user_dashboard">
+                        <i class="fas fa-home me-1"></i>Dashboard
+                    </a>
+                </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link" href="#" id="cropsDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        <i class="fas fa-seedling me-1"></i>Crops
+                        <i class="fas fa-caret-down"></i>
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="cropsDropdown">
+                        <li><a class="dropdown-item" href="#"><i class="fas fa-carrot me-2"></i>Carrots</a></li>
+                        <li><a class="dropdown-item" href="/sugarcane"><i class="fas fa-seedling me-2"></i>Sugarcane</a></li>
+                        <li><a class="dropdown-item" href="#"><i class="fas fa-leaf me-2"></i>Wheat</a></li>
+                        <li><a class="dropdown-item" href="#"><i class="fas fa-cog me-2"></i>Coming Soon</a></li>
+                        <li><hr class="dropdown-divider"></li>
+                    </ul>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/finance">
+                        <i class="fas fa-money-bill"></i>Financial Planning
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/news">
+                        <i class="fas fa-history me-1"></i>News
+                    </a>
+                </li>
+
+                <li class="nav-item">
+                    <a class="nav-link" href="/chatbot">
+                        <i class="fas fa-comments me-1"></i>Chat Assistance
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/marketplace">
+                        <i class="fas fa-search-dollar"></i>Marketplace
+                    </a>
+                </li>
+            
+                <li class="nav-item">
+                    <a class="nav-link active" href="/about">
+                        <i class="fas fa-info-circle me-1"></i>About Us
+                    </a>
+                </li>
+            </ul>
+            <div class="translate-wrapper">
+                <div id="google_translate_element"></div>
+            </div>
+            <div class="dropdown">
+                <a class="dropdown-item" href="/logout"><i class="fas fa-sign-out-alt me-2"></i>Logout</a>
+            </div>
+        </div>
+    </div>
+</nav>
+
+
+    <!-- Hero Section -->
+    <section class="hero-section">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-8 mx-auto text-center">
+                    <h1 class="display-4 mb-4">Empowering Agricultural Excellence</h1>
+                    <p class="lead">CropGuard is your intelligent farming companion, combining advanced technology with agricultural expertise to optimize crop management and boost productivity.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Mission Section -->
+    <section class="mission-section">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-8 mx-auto text-center">
+                    <h2 class="mb-4">Our Mission</h2>
+                    <p class="lead">To revolutionize agriculture through smart technology, enabling farmers to make data-driven decisions and achieve sustainable farming practices.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="container mb-5">
+        <h2 class="text-center mb-5">What CropGuard Offers</h2>
+        <div class="row">
+            <div class="col-md-4">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-cloud-sun"></i>
+                    </div>
+                    <h3>Real-time Weather Monitoring</h3>
+                    <p>Access precise weather forecasts and environmental data tailored to your farm's location.</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-chart-line"></i>
+                    </div>
+                    <h3>Crop Analytics</h3>
+                    <p>Track crop performance, predict yields, and optimize resource allocation using advanced analytics.</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-newspaper"></i>
+                    </div>
+                    <h3>Agricultural Insights</h3>
+                    <p>Stay updated with the latest agricultural news, market trends, and farming best practices.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="team-section py-5">
+        <div class="container">
+            <h2 class="text-center mb-5">Meet Our Team</h2>
+            <div class="row justify-content-center">
+                <!-- Aditya -->
+                <div class="col-lg-3 col-md-6 mb-4">
+                    <div class="team-card h-100">
+                        <div class="team-avatar mb-4">
+                            <img src="{{ url_for('static', filename='images/aditya.jpeg') }}" 
+                                 alt="Aditya Chavan" 
+                                 class="img-fluid rounded-circle mx-auto d-block"
+                                 style="width: 150px; height: 150px; object-fit: cover;">
+                        </div>
+                        <div class="text-center">
+                            <h3 class="mb-2">Aditya Chavan</h3>
+                            <p class="text-muted mb-3">Software Engineer</p>
+                            <div class="social-links">
+                                <a href="https://www.linkedin.com/in/aditya-chavan-5117aa268/" class="mx-2"><i class="fab fa-linkedin fa-lg"></i></a>
+                                <a href="https://github.com/adit0chavan" class="mx-2"><i class="fab fa-github fa-lg"></i></a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+    
+                <!-- Saumya -->
+                <div class="col-lg-3 col-md-6 mb-4">
+                    <div class="team-card h-100">
+                        <div class="team-avatar mb-4">
+                            <img src="{{ url_for('static', filename='images/saumya.jpeg') }}" 
+                                 alt="Saumya Shah" 
+                                 class="img-fluid rounded-circle mx-auto d-block"
+                                 style="width: 150px; height: 150px; object-fit: cover;">
+                        </div>
+                        <div class="text-center">
+                            <h3 class="mb-2">Saumya Shah</h3>
+                            <p class="text-muted mb-3">Software Engineer</p>
+                            <div class="social-links">
+                                <a href="https://www.linkedin.com/in/saumya-shah-9b2579273/" class="mx-2"><i class="fab fa-linkedin fa-lg"></i></a>
+                                <a href="https://github.com/Saumya-Shah17" class="mx-2"><i class="fab fa-github fa-lg"></i></a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+    
+                <!-- Bhavin -->
+                <div class="col-lg-3 col-md-6 mb-4">
+                    <div class="team-card h-100">
+                        <div class="team-avatar mb-4">
+                            <img src="{{ url_for('static', filename='images/bhavin.jpeg') }}" 
+                                 alt="Bhavin Baldota" 
+                                 class="img-fluid rounded-circle mx-auto d-block"
+                                 style="width: 150px; height: 150px; object-fit: cover;">
+                        </div>
+                        <div class="text-center">
+                            <h3 class="mb-2">Bhavin Baldota</h3>
+                            <p class="text-muted mb-3">Software Engineer</p>
+                            <div class="social-links">
+                                <a href="https://www.linkedin.com/in/bhavin-baldota-103553234/" class="mx-2"><i class="fab fa-linkedin fa-lg"></i></a>
+                                <a href="https://github.com/CoderFatherBB" class="mx-2"><i class="fab fa-github fa-lg"></i></a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+    
+                <!-- Sharvari -->
+                <div class="col-lg-3 col-md-6 mb-4">
+                    <div class="team-card h-100">
+                        <div class="team-avatar mb-4">
+                            <img src="{{ url_for('static', filename='images/sharvari.jpg') }}" 
+                                 alt="Sharvari Korde" 
+                                 class="img-fluid rounded-circle mx-auto d-block"
+                                 style="width: 150px; height: 150px; object-fit: cover;">
+                        </div>
+                        <div class="text-center">
+                            <h3 class="mb-2">Sharvari Korde</h3>
+                            <p class="text-muted mb-3">Software Engineer</p>
+                            <div class="social-links">
+                                <a href="https://www.linkedin.com/in/sharvari-korde-85b993268/" class="mx-2"><i class="fab fa-linkedin fa-lg"></i></a>
+                                <a href="https://github.com/as-salad-code" class="mx-2"><i class="fab fa-github fa-lg"></i></a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <script>
+        
+        // Google Translate initialization
+        function googleTranslateElementInit() {
+            new google.translate.TranslateElement(
+                {
+                    pageLanguage: 'en',
+                    includedLanguages: 'en,hi,mr', // English, Hindi, Marathi
+                    layout: google.translate.TranslateElement.InlineLayout.SIMPLE,
+                    autoDisplay: false,
+                },
+                'google_translate_element'
+            );
+        }
+
+        // Store language preference
+        function storeLanguagePreference() {
+            const select = document.querySelector('.goog-te-combo');
+            if (select) {
+                select.addEventListener('change', function() {
+                    localStorage.setItem('preferred-language', this.value);
+                });
+            }
+        }
+
+
+
+    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

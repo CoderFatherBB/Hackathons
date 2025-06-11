@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Land Slope Measurement</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin-top: 50px;
+        }
+        #slope {
+            font-size: 24px;
+            font-weight: bold;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Land Slope Measurement</h1>
+    <p>Place your device on the ground to measure the slope.</p>
+    <div id="slope">Slope: 0.00°</div>
+    <p id="recommendation"></p>
+    <button onclick="calibrate()">Calibrate</button>
+    <button onclick="saveData()">Save Data</button>
+
+    <script>
+        let calibrationOffset = 0;
+
+        if (window.DeviceOrientationEvent) {
+            window.addEventListener("deviceorientation", handleOrientation, true);
+        } else {
+            alert("Sorry, your device does not support the DeviceOrientation API.");
+        }
+
+        function handleOrientation(event) {
+            const gamma = event.gamma; // Left-to-right tilt (range: -90 to 90)
+            const slope = gamma + calibrationOffset; // Apply calibration offset
+
+            // Display slope
+            const slopeElement = document.getElementById("slope");
+            slopeElement.textContent = `Slope: ${slope.toFixed(2)}°`;
+
+            // Display recommendations
+            const recommendationElement = document.getElementById("recommendation");
+            if (slope >= -10 && slope <= 10) {
+                recommendationElement.textContent = "Recommendation: Suitable for flat crops like wheat or rice.";
+            } else {
+                recommendationElement.textContent = "Recommendation: Use drip irrigation and contour farming.";
+            }
+        }
+
+        function calibrate() {
+            const slopeElement = document.getElementById("slope");
+            const slope = parseFloat(slopeElement.textContent.split(": ")[1]);
+            calibrationOffset = -slope;
+        }
+
+        function saveData() {
+            const slope = document.getElementById("slope").textContent;
+            const blob = new Blob([slope], { type: "text/plain" });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement("a");
+            a.href = url;
+            a.download = "slope_measurement.txt";
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+        }
+    </script>
+</body>
+</html>
