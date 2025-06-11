@@ -21,7 +21,7 @@ def sc():
     retriever = vectorstore.as_retriever()
 
     llm = ChatGroq(
-        api_key = "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",
+        api_key = "",
         model="llama3-8b-8192"
     )
 

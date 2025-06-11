@@ -246,7 +246,7 @@ def extract_agricultural_products(text: str) -> list:
     """
     Extract agricultural product names from the given text using an LLM.
     """
-    GROQ_API_KEY = "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"
+    GROQ_API_KEY = ""
     llm = ChatGroq(
         api_key=GROQ_API_KEY,
         model="llama-3.3-70b-versatile",
