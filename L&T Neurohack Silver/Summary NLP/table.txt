@@ -1,0 +1,11 @@
+### Feature Comparison for the Application
+
+| Feature                | Description                           | Priority  |
+|-----------------------|---------------------------------------|-----------|
+| **User Interface**    | Intuitive and easy to navigate       | High      |
+| **Security**          | Robust encryption and data protection | High      |
+| **Compatibility**     | Support for multiple file formats     | Medium    |
+| **Performance**       | Fast processing speed                 | High      |
+| **Accessibility**     | Features for users with disabilities  | Medium    |
+| **Support**           | 24/7 customer service availability    | Low       |
+
