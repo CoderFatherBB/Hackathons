@@ -1,0 +1,833 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <script type="text/javascript">
+        // Create a promise to track Google Translate script loading
+        let googleTranslateScriptPromise = null;
+    
+        function loadGoogleTranslateScript() {
+            if (!googleTranslateScriptPromise) {
+                googleTranslateScriptPromise = new Promise((resolve, reject) => {
+                    const script = document.createElement('script');
+                    script.src = '//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit';
+                    script.async = true;
+                    script.defer = true;
+                    
+                    script.onload = () => {
+                        // Small delay to ensure the API is fully loaded
+                        setTimeout(resolve, 100);
+                    };
+                    script.onerror = reject;
+                    
+                    document.head.appendChild(script);
+                });
+            }
+            return googleTranslateScriptPromise;
+        }
+    
+        // Modified initialization function
+        function googleTranslateElementInit() {
+            // Check if the element exists
+            const translateElement = document.getElementById('google_translate_element');
+            if (!translateElement) return;
+    
+            // Check if translate widget is already initialized
+            if (translateElement.childNodes.length > 0) return;
+    
+            new google.translate.TranslateElement(
+                {
+                    pageLanguage: 'en',
+                    includedLanguages: 'en,hi,mr',
+                    layout: google.translate.TranslateElement.InlineLayout.SIMPLE,
+                    autoDisplay: false,
+                },
+                'google_translate_element'
+            );
+    
+            // Initialize language preference handling
+            storeLanguagePreference();
+        }
+    
+        // Modified storage function with error handling
+        function storeLanguagePreference() {
+            try {
+                const select = document.querySelector('.goog-te-combo');
+                if (select) {
+                    // Get stored preference
+                    const storedLang = localStorage.getItem('preferred-language');
+                    if (storedLang) {
+                        select.value = storedLang;
+                        // Trigger change event to apply the stored language
+                        const event = new Event('change');
+                        select.dispatchEvent(event);
+                    }
+    
+                    select.addEventListener('change', function() {
+                        try {
+                            localStorage.setItem('preferred-language', this.value);
+                        } catch (e) {
+                            console.error('Error storing language preference:', e);
+                        }
+                    });
+                }
+            } catch (e) {
+                console.error('Error in storeLanguagePreference:', e);
+            }
+        }
+    
+        // Function to initialize translation
+        function initializeTranslation() {
+            // Load jQuery first (if not already loaded)
+            if (typeof jQuery === 'undefined') {
+                const jqueryScript = document.createElement('script');
+                jqueryScript.src = 'https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js';
+                jqueryScript.onload = () => loadGoogleTranslateScript();
+                document.head.appendChild(jqueryScript);
+            } else {
+                loadGoogleTranslateScript();
+            }
+        }
+    
+        // Call initialization when DOM is ready
+        document.addEventListener('DOMContentLoaded', initializeTranslation);
+    
+        // Backup initialization for cases where DOMContentLoaded might have already fired
+        if (document.readyState === 'complete' || document.readyState === 'interactive') {
+            initializeTranslation();
+        }
+    </script> 
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CropGuard Dashboard</title>
+    
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/weather-icons/2.0.12/css/weather-icons.min.css">
+    <style>
+        :root {
+            --primary-color: #4CAF50;
+            --secondary-color: #2E7D32;
+        }
+
+        body {
+            position: relative;
+            margin: 0;
+            padding: 0;
+        }
+        
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('static/images/op2.jpg');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            filter: blur(8px); /* Applies the blur to the background */
+            z-index: -1; /* Ensures it stays behind all content */
+        }
+        
+
+/* Updated translation-related styles */
+.goog-te-banner-frame.skiptranslate {
+            display: none !important;
+        }
+        
+        .goog-te-gadget {
+            font-family: inherit !important;
+            color: transparent !important;
+        }
+        
+        .goog-te-gadget .goog-te-combo {
+            appearance: none;
+            -webkit-appearance: none;
+            padding: 8px 30px 8px 12px;
+            border-radius: 6px;
+            border: 1px solid #e0e0e0;
+            color: #333;
+            background: white;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s ease;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%234CAF50' viewBox='0 0 16 16'%3E%3Cpath d='M7.247 11.14L2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: calc(100% - 8px) center;
+            min-width: 160px;
+        }
+        
+        .goog-te-gadget .goog-te-combo:hover {
+            border-color: var(--primary-color);
+            box-shadow: 0 2px 4px rgba(76, 175, 80, 0.1);
+        }
+        
+        .goog-te-gadget .goog-te-combo:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.2);
+        }
+
+        .translate-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 4px 8px;
+            border-radius: 6px;
+            background: rgba(76, 175, 80, 0.1);
+            margin-right: 1rem;
+        }
+
+
+        .navbar-brand i {
+            color: var(--primary-color);
+            margin-right: 0.5rem;
+        }
+
+        .nav-link.active {
+            color: var(--primary-color) !important;
+            font-weight: 500;
+        }
+
+        .main-content {
+            padding: 2rem;
+        }
+        .weather-panel {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-radius: 20px;
+            box-shadow: 25px 25px 40px 0px rgba(0,0,0,0.33);
+            color: #fff;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            overflow: hidden;
+            position: relative;
+            background: linear-gradient(to bottom, #000, #333);
+            transition: background 0.5s ease-in-out;
+        }        
+        
+        .weather-symbol {
+            font-size: 6rem; /* Increase size for prominence */
+            color: #fff;
+        }        
+
+        .weather-panel .location-date {
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+        }
+        
+        .weather-panel .date {
+            font-size: 1rem;
+            font-weight: normal;
+            margin-top: -0.5rem;
+            color: #ddd;
+        }
+
+        .weather-panel .weather-desc {
+            font-size: 1.2rem;
+            margin-bottom: 1rem;
+        }
+
+        .weather-panel .temperature {
+            font-size: 3rem;
+            font-weight: bold;
+        }
+
+        .mi {
+            font-family: 'FontAwesome';
+        }
+
+        .stat-card {
+            background: linear-gradient(to bottom, #000, #333);
+            padding: 1.5rem;
+            border-radius: 1rem;
+            box-shadow: 25px 25px 40px 0px rgba(0,0,0,0.33);
+            height: 100%;
+            color: #fff;
+            margin-bottom: 1rem;
+        }
+
+        .stat-card h3 {
+            color: #fff;
+            margin-bottom: 1rem;
+            font-size: 1.1rem;
+        }
+        .stat-card p {
+            color: var(--primary-color);
+            font-size: 2rem;
+            font-weight: bold;
+            margin: 0;
+        }
+        .progress {
+            height: 25px;
+            margin-bottom: 1rem;
+        }
+
+        .irrigation-schedule {
+            background-color: rgba(255, 255, 255, 0.9);
+            border-radius: 10px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .irrigation-time {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.5rem;
+            border-bottom: 1px solid #eee;
+        }
+
+        .fertilizer-card {
+            background-color: rgba(255, 255, 255, 0.9);
+            border-radius: 10px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .fertilizer-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.5rem;
+            border-bottom: 1px solid #eee;
+        }
+
+        .alerts-container {
+            background-color: rgba(255, 255, 255, 0.9);
+            border-radius: 10px;
+            padding: 1rem;
+            margin-top: 2rem;
+        }
+
+        .alert {
+            margin-bottom: 0.5rem;
+        }
+
+        /* New styles for status buttons and indicators */
+        .status-buttons {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .completion-status {
+            display: none;
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            font-weight: 500;
+        }
+
+        .status-complete {
+            background-color: #198754;
+            color: white;
+        }
+
+        .status-incomplete {
+            background-color: #dc3545;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <!-- Bootstrap Navbar (Same as before) -->
+    <nav class="navbar navbar-expand-lg navbar-light  ">
+        <div class="container">
+            <a class="navbar-brand d-flex align-items-center" href="/user_dashboard">
+                <i class="fas fa-leaf fa-lg"></i>
+                <span class="ms-2">CropGuard</span>
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="/user_dashboard">
+                            <i class="fas fa-home me-1"></i>Dashboard
+                        </a>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link" href="#" id="cropsDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="fas fa-seedling me-1"></i>Crops
+                            <i class="fas fa-caret-down"></i>
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="cropsDropdown">
+                            <li><a class="dropdown-item" href="#"><i class="fas fa-carrot me-2"></i>Carrots</a></li>
+                            <li><a class="dropdown-item" href="/sugarcane"><i class="fas fa-seedling me-2"></i>Sugarcane</a></li>
+                            <li><a class="dropdown-item" href="#"><i class="fas fa-leaf me-2"></i>Wheat</a></li>
+                            <li><a class="dropdown-item" href="#"><i class="fas fa-cog me-2"></i>Coming Soon</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                        </ul>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/news">
+                            <i class="fas fa-history me-1"></i>Top News
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/chatbot">
+                            <i class="fas fa-comments me-1"></i>Chat Assistance
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/about">
+                            <i class="fas fa-info-circle me-1"></i>About Us
+                        </a>
+                    </li>
+                   
+                </ul>
+                <div class="translate-wrapper">
+                    <i class="fas fa-globe"></i>
+                    <div id="google_translate_element"></div>
+                </div>
+                <div class="d-flex">
+                    <div class="dropdown">
+                        <a class="dropdown-item" href="/logout"><i class="fas fa-sign-out-alt me-2"></i>Logout</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container main-content">
+        
+        <div class="container">
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="weather-panel d-flex align-items-center justify-content-between">
+                        <div>
+                            <div class="location-date">
+                                <span id="city-name">Loading...</span>
+                                <div class="date" id="current-date">Loading...</div>
+                            </div>
+                            <div class="weather-desc" id="weather-desc">Loading...</div>
+                            <div class="temperature" id="current-temp">--°</div>
+                        </div>
+                        <div class="weather-symbol" id="weather-symbol">
+                            <i class="wi wi-na"></i>
+                        </div>
+                    </div>                    
+                </div>
+                
+            <div class="col-md-6">
+                <div class="stat-card">
+                    <h3>Crop Growth Progress</h3>
+                    <div class="progress">
+                        <div class="progress-bar bg-success" role="progressbar" style="width: 70%;" 
+                             aria-valuenow="70" aria-valuemin="0" aria-valuemax="100">70%</div>
+                    </div>
+                    <div class="d-flex justify-content-between text-white-50">
+                        <span>Planting</span>
+                        <span>Current Stage</span>
+                        <span>Harvest</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row mt-4">
+            <div class="col-md-6">
+                <div class="irrigation-schedule">
+                    <h3 class="text-success mb-3">Irrigation Schedule</h3>
+                    <div id="irrigation-container">
+                        <!-- Will be populated by JavaScript -->
+                    </div>
+                </div>
+            </div>
+        
+            <div class="col-md-6">
+                <div class="fertilizer-card">
+                    <h3 class="text-success mb-3">Fertilization Schedule</h3>
+                    <div id="fertilizer-container">
+                        <!-- Will be populated by JavaScript -->
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="alerts-container">
+            <h3 class="text-success mb-3">Upcoming Events & Alerts</h3>
+            <div class="alert alert-warning">
+                <i class="fas fa-exclamation-triangle me-2"></i>
+                Fertilization scheduled for tomorrow
+            </div>
+            <div class="alert alert-info">
+                <i class="fas fa-info-circle me-2"></i>
+                Irrigation system maintenance needed in 3 days
+            </div>
+            <div class="alert alert-success">
+                <i class="fas fa-check-circle me-2"></i>
+                Crop harvest estimated in 2 weeks
+            </div>
+        </div>
+    </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Fetch and display schedule data
+            function fetchSchedule() {
+                fetch('/get_schedule')
+                    .then(response => response.json())
+                    .then(tasks => {
+                        updateTasksUI(tasks);
+                    })
+                    .catch(error => console.error('Error:', error));
+            }
+        
+            function updateTasksUI(tasks) {
+                const irrigationContainer = document.getElementById('irrigation-container');
+                const fertilizerContainer = document.getElementById('fertilizer-container');
+                
+                // Clear existing content
+                irrigationContainer.innerHTML = '';
+                fertilizerContainer.innerHTML = '';
+                
+                if (tasks.length === 0) {
+                    irrigationContainer.innerHTML = '<div class="irrigation-time">No irrigation tasks scheduled</div>';
+                    fertilizerContainer.innerHTML = '<div class="fertilizer-item">No fertilizer tasks scheduled</div>';
+                    return;
+                }
+        
+                // Create HTML for each week's tasks
+                tasks.forEach(weekData => {
+                    // Add Irrigation Tasks
+                    if (weekData.irrigation) {
+                        const weekHeader = document.createElement('div');
+                        weekHeader.className = 'week-header mb-2';
+                        weekHeader.innerHTML = `<h4 class="text-success">Week ${weekData.week}</h4>`;
+                        irrigationContainer.appendChild(weekHeader);
+        
+                        const tasks = weekData.irrigation.split(',');
+                        tasks.forEach(task => {
+                            const taskText = task.trim();
+                            if (!taskText) return;
+        
+                            const taskDiv = document.createElement('div');
+                            taskDiv.className = 'irrigation-time';
+                            taskDiv.innerHTML = `
+                                <span>${taskText}</span>
+                                <div class="status-buttons">
+                                    ${weekData.irrigationComplete ? 
+                                        `<span class="completion-status status-complete" style="display: inline-block;">
+                                            <i class="fas fa-check-circle me-2"></i>Completed
+                                        </span>` :
+                                        `<button class="btn btn-success btn-sm" onclick="completeTask('irrigation', ${weekData.week})">
+                                            <i class="fas fa-check me-2"></i>Complete
+                                        </button>`
+                                    }
+                                </div>
+                            `;
+                            irrigationContainer.appendChild(taskDiv);
+                        });
+                    }
+        
+                    // Add Fertilizer Tasks
+                    if (weekData.fertilizer) {
+                        const weekHeader = document.createElement('div');
+                        weekHeader.className = 'week-header mb-2';
+                        weekHeader.innerHTML = `<h4 class="text-success">Week ${weekData.week}</h4>`;
+                        fertilizerContainer.appendChild(weekHeader);
+        
+                        const tasks = weekData.fertilizer.split(',');
+                        tasks.forEach(task => {
+                            const taskText = task.trim();
+                            if (!taskText) return;
+        
+                            const taskDiv = document.createElement('div');
+                            taskDiv.className = 'fertilizer-item';
+                            taskDiv.innerHTML = `
+                                <span>${taskText}</span>
+                                <div class="status-buttons">
+                                    ${weekData.fertilizerComplete ? 
+                                        `<span class="completion-status status-complete" style="display: inline-block;">
+                                            <i class="fas fa-check-circle me-2"></i>Completed
+                                        </span>` :
+                                        `<button class="btn btn-success btn-sm" onclick="completeTask('fertilizer', ${weekData.week})">
+                                            <i class="fas fa-check me-2"></i>Complete
+                                        </button>`
+                                    }
+                                </div>
+                            `;
+                            fertilizerContainer.appendChild(taskDiv);
+                        });
+                    }
+                });
+            }
+        
+            // Update the completeTask function to handle specific weeks
+            window.completeTask = function(type, week) {
+                fetch('/update_task', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ 
+                        type: type,
+                        week: week 
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        fetchSchedule(); // Refresh the UI
+                    }
+                })
+                .catch(error => console.error('Error:', error));
+            };
+        
+            // Initial fetch of schedule
+            fetchSchedule();
+        });
+        
+        // Add some additional CSS to your existing styles
+        const styles = `
+            .week-header {
+                padding: 10px 0;
+                margin-top: 15px;
+                border-bottom: 2px solid #4CAF50;
+            }
+            .week-header h4 {
+                margin: 0;
+                font-size: 1.1rem;
+                font-weight: 500;
+            }
+            .irrigation-time, .fertilizer-item {
+                margin-top: 8px;
+                background-color: rgba(255, 255, 255, 0.9);
+            }
+        `;
+        
+        // Add styles to the document
+        const styleSheet = document.createElement("style");
+        styleSheet.innerText = styles;
+        document.head.appendChild(styleSheet);
+    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/5.11.3/main.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
+    <script>
+        
+         // Function to handle status updates
+         function updateStatus(button, isComplete) {
+            const container = button.closest('.irrigation-time, .fertilizer-item');
+            const buttonsContainer = container.querySelector('.status-buttons');
+            const statusSpan = container.querySelector('.completion-status');
+            
+            // Hide the buttons
+            buttonsContainer.style.display = 'none';
+
+            statusSpan.style.display = 'inline-block';
+            if (isComplete) {
+                statusSpan.textContent = 'Completed';
+                statusSpan.classList.add('status-complete');
+            } else {
+                statusSpan.textContent = 'Not Completed';
+                statusSpan.classList.add('status-incomplete');
+            }
+        }
+
+        // Google Translate initialization
+        function googleTranslateElementInit() {
+            new google.translate.TranslateElement(
+                {
+                    pageLanguage: 'en',
+                    includedLanguages: 'en,hi,mr', // English, Hindi, Marathi
+                    layout: google.translate.TranslateElement.InlineLayout.SIMPLE,
+                    autoDisplay: false,
+                },
+                'google_translate_element'
+            );
+        }
+
+        // Store language preference
+        function storeLanguagePreference() {
+            const select = document.querySelector('.goog-te-combo');
+            if (select) {
+                select.addEventListener('change', function() {
+                    localStorage.setItem('preferred-language', this.value);
+                });
+            }
+        }
+
+
+
+        document.addEventListener('DOMContentLoaded', function() {
+            function updateBackground() {
+                const currentHour = new Date().getHours();
+                const weatherPanel = document.querySelector('.weather-panel');
+                
+                // Define color schemes for different times of the day
+                const colorSchemes = {
+                    dawn: 'linear-gradient(to bottom, #FFD194, #D1913C)', // 5AM - 7AM
+                    morning: 'linear-gradient(to bottom, #FFEFBA, #FFFFFF)', // 7AM - 11AM
+                    noon: 'linear-gradient(to bottom, #87CEEB, #1E90FF)', // 11AM - 3PM
+                    evening: 'linear-gradient(to bottom, #FDB99B, #3D4E81)', // 3PM - 7PM
+                    dusk: 'linear-gradient(to bottom, #654EA3, #EAAFc8)', // 7PM - 9PM
+                    night: 'linear-gradient(to bottom, #2C3E50, #4CA1AF)' // 9PM - 5AM
+                };
+    
+                // Apply the appropriate gradient
+                if (currentHour >= 5 && currentHour < 7) {
+                    weatherPanel.style.background = colorSchemes.dawn;
+                } else if (currentHour >= 7 && currentHour < 11) {
+                    weatherPanel.style.background = colorSchemes.morning;
+                } else if (currentHour >= 11 && currentHour < 15) {
+                    weatherPanel.style.background = colorSchemes.noon;
+                } else if (currentHour >= 15 && currentHour < 19) {
+                    weatherPanel.style.background = colorSchemes.evening;
+                } else if (currentHour >= 19 && currentHour < 21) {
+                    weatherPanel.style.background = colorSchemes.dusk;
+                } else {
+                    weatherPanel.style.background = colorSchemes.night;
+                }
+            }
+            updateBackground();
+        });
+    </script>    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Get location and weather
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(
+                    function(position) {
+                        const latitude = position.coords.latitude;
+                        const longitude = position.coords.longitude;
+                        const weatherIcons = {
+                            "Clear": "wi-day-sunny",
+                            "Clouds": "wi-cloudy",
+                            "Rain": "wi-rain",
+                            "Drizzle": "wi-sprinkle",
+                            "Thunderstorm": "wi-thunderstorm",
+                            "Snow": "wi-snow",
+                            "Mist": "wi-fog",
+                            "Haze": "wi-day-haze",
+                            "Smoke": "wi-smoke",
+                            "Dust": "wi-dust",
+                            "Fog": "wi-fog",
+                            "Sand": "wi-sandstorm",
+                            "Ash": "wi-volcano",
+                            "Squall": "wi-strong-wind",
+                            "Tornado": "wi-tornado"
+                        };                                             
+
+                        fetch(`https://api.openweathermap.org/geo/1.0/reverse?lat=${latitude}&lon=${longitude}&limit=1&appid=9cc32b17eb9445a7669256a9fddd9f01`)
+                            .then(response => response.json())
+                            .then(locationData => {
+                                const cityName = locationData[0].name;
+                                const currentDate = new Date().toLocaleDateString('en-US', {
+                                    month: 'long',
+                                    day: 'numeric',
+                                    year: 'numeric'
+                                });
+                                document.getElementById('city-name').textContent = cityName;
+                                document.getElementById('current-date').textContent = currentDate;
+                            })
+                            .catch(err => {
+                                console.error('Error fetching location name:', err);
+                                document.getElementById('city-name').textContent = 'Current Location';
+                                document.getElementById('current-date').textContent = 
+                                    new Date().toLocaleDateString('en-US', {
+                                        month: 'long',
+                                        day: 'numeric',
+                                        year: 'numeric'
+                                    });
+                            });
+
+                        
+                        // Then get the weather data
+                        fetch('/update_location', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                            },
+                            body: JSON.stringify({ latitude, longitude }),
+                        })
+                        .then(response => {
+                            if (!response.ok) {
+                                throw new Error('Network response was not ok');
+                            }
+                            return response.json();
+                        })
+                        .then(data => {
+                            if (data.weather) {
+                                const weatherDescription = data.weather.description;
+                                const weatherMain = data.weather.main;
+                                
+                                // Update temperature
+                                const tempElement = document.getElementById('current-temp');
+                                tempElement.textContent = `${Math.round(data.weather.temperature)}°C`;
+                                
+                                // Update description
+                                const descElement = document.getElementById('weather-desc');
+                                descElement.textContent = weatherDescription;
+                                
+                                // Update weather icon
+                                const iconElement = document.getElementById('weather-symbol');
+                                const iconClass = weatherIcons[weatherMain] || "wi-na";
+                                iconElement.innerHTML = `<i class="wi ${iconClass}"></i>`;
+                            } else {
+                                throw new Error('Weather data not found in response');
+                            }
+                        })
+                        .catch(err => {
+                            console.error('Error fetching weather data:', err);
+                            // Update UI to show error state
+                            document.getElementById('current-temp').textContent = 'N/A';
+                            document.getElementById('weather-desc').textContent = 'Weather data unavailable';
+                            document.getElementById('weather-symbol').innerHTML = '<i class="wi wi-na"></i>';
+                        });                       
+                    },
+                    function(error) {
+                        console.error('Error fetching location:', error);
+                        document.getElementById('location-date').textContent = 'Location access denied';
+                    }
+                );
+            }
+
+            // Initialize calendar
+            var calendarEl = document.getElementById('calendar');
+            var calendar = new FullCalendar.Calendar(calendarEl, {
+                initialView: 'dayGridMonth',
+                headerToolbar: {
+                    left: 'prev,next today',
+                    center: 'title',
+                    right: 'dayGridMonth,timeGridWeek,timeGridDay'
+                },
+                events: [],
+                height: 'auto'
+            });
+            calendar.render();
+
+            // Fetch news
+            async function fetchNews() {
+                try {
+                    const response = await fetch('/get_news');
+                    const newsItems = await response.json();
+                    const newsContainer = document.getElementById('news-container');
+                    
+                    newsItems.slice(0, 5).forEach(item => {
+                        const newsElement = `
+                            <div class="news-item">
+                                <div class="news-date">${item.published_date}</div>
+                                <h3 class="news-title">${item.title}</h3>
+                                <p class="news-description">${item.description}</p>
+                                <a href="${item.link}" class="btn btn-sm btn-outline-success" target="_blank">Read More</a>
+                            </div>
+                        `;
+                        newsContainer.innerHTML += newsElement;
+                    });
+                } catch (error) {
+                    console.error('Error fetching news:', error);
+                }
+            }
+
+            fetchNews();
+        });
+    </script>
+</body>
+</html>

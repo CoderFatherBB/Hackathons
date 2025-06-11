@@ -1,0 +1,86 @@
+<!-- index.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CropGuard - Smart Disease Detection</title>
+    <link rel="stylesheet" href="/static/css/styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <div class="login-page">
+        <!-- Left Section with Login Form -->
+        <div class="login-section">
+            <div class="login-content">
+                <div class="brand">
+                    <div class="logo">
+                        <i class="fas fa-leaf"></i>
+                        <span>CropGuard</span>
+                    </div>
+                </div>
+
+                <div class="login-form-container">
+                    <h1>Welcome Back!</h1>
+                    <p class="subtitle">Login to access your crop disease detection dashboard</p>
+
+                    <form id="loginForm" class="login-form">
+                        <div class="input-group">
+                            <i class="fas fa-user"></i>
+                            <input type="text" id="username" placeholder="Username" required>
+                        </div>
+                        <div class="input-group">
+                            <i class="fas fa-lock"></i>
+                            <input type="password" id="password" placeholder="Password" required>
+                        </div>
+                        <div class="form-footer">
+                            <label class="remember-me">
+                                <input type="checkbox">
+                                <span>Remember me</span>
+                            </label>
+                            <a href="#" class="forgot-password">Forgot Password?</a>
+                        </div>
+                        <button type="submit">Login</button>
+                    </form>
+
+                    <p class="signup-link">
+                        New to CropGuard? <a href="/signup">Create an account</a>
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Section with Info -->
+        <div class="info-section">
+            <div class="overlay"></div>
+            <div class="info-content">
+                <h2>Protect Your Crops with AI-Powered Disease Detection</h2>
+                <div class="features">
+                    <div class="feature-item">
+                        <i class="fas fa-microscope"></i>
+                        <div class="feature-text">
+                            <h3>Instant Analysis</h3>
+                            <p>Get real-time disease detection results with 98% accuracy</p>
+                        </div>
+                    </div>
+                    <div class="feature-item">
+                        <i class="fas fa-history"></i>
+                        <div class="feature-text">
+                            <h3>Track Progress</h3>
+                            <p>Monitor crop health history and treatment effectiveness</p>
+                        </div>
+                    </div>
+                    <div class="feature-item">
+                        <i class="fas fa-mobile-alt"></i>
+                        <div class="feature-text">
+                            <h3>Mobile Ready</h3>
+                            <p>Access your dashboard anytime, anywhere</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="/static/js/login.js"></script>
+</body>
+</html>

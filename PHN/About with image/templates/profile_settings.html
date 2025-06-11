@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profile Settings</title>
+    <link rel="stylesheet" href="/static/css/styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <div class="dashboard-container">
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <div class="sidebar-header">
+                <h2>Crop Disease Detection</h2>
+            </div>
+            <div class="sidebar-menu">
+                <a href="/user_dashboard" class="menu-item">
+                    <i class="fas fa-home"></i>
+                    Dashboard
+                </a>
+                <a href="/profile_settings" class="menu-item active">
+                    <i class="fas fa-user"></i>
+                    Profile Settings
+                </a>
+                <a href="/news" class="menu-item">
+                    <i class="fas fa-newspaper"></i>
+                    Top News
+                </a>
+                <a href="/" class="menu-item">
+                    <i class="fas fa-sign-out-alt"></i>
+                    Logout
+                </a>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <div class="dashboard-content">
+                <h1>Profile Settings</h1>
+
+                <div class="container">
+                    <div class="box">
+                        <h2>Profile Settings</h2>
+                        
+                        <!-- Avatar Section -->
+                        <div class="avatar-container">
+                            <img src="https://cdn-icons-png.flaticon.com/512/6676/6676023.png" alt="User Avatar">
+                            <button type="button">Change Avatar</button>
+                        </div>
+
+                        <!-- Form Section -->
+                        <form>
+                            <input type="text" name="fname" placeholder="Full Name" required>
+                            <input type="email" name="email" placeholder="Email" required>
+                            <input type="password" name="pass" placeholder="Password" required>
+                            <input type="date" name="dob" placeholder="Birthday" required>
+
+                            <div class="buttons">
+                                <button type="submit" class="save">Save Changes</button>
+                                <button type="reset" class="cancel">Cancel</button>
+                            </div>
+
+                            <button type="button" class="back-dashboard" onclick="window.location.href='/dashboard'">Back to Dashboard</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Chat Button -->
+        <button class="chat-toggle-btn" id="chatToggle">
+            <i class="fas fa-comments"></i>
+        </button>
+
+        <!-- Chat Container -->
+        <div class="chat-container" id="chatContainer">
+            <div class="chat-header">
+                <h3><i class="fas fa-robot"></i> CropGuard Assistant</h3>
+                <button class="chat-close" id="chatClose">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="chat-messages" id="chatMessages">
+                <div class="message bot-message">
+                    Hello! How can I help you with your crops today?
+                </div>
+            </div>
+            <div class="chat-input-container">
+                <input type="text" class="chat-input" id="chatInput" placeholder="Type your message...">
+                <button class="send-button" id="sendMessage">
+                    <i class="fas fa-paper-plane"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Chat Functionality
+        const chatToggle = document.getElementById('chatToggle');
+        const chatClose = document.getElementById('chatClose');
+        const chatContainer = document.getElementById('chatContainer');
+        const chatInput = document.getElementById('chatInput');
+        const sendMessage = document.getElementById('sendMessage');
+        const chatMessages = document.getElementById('chatMessages');
+
+        chatToggle.addEventListener('click', () => {
+            chatContainer.classList.add('active');
+            chatInput.focus();
+        });
+
+        chatClose.addEventListener('click', () => {
+            chatContainer.classList.remove('active');
+        });
+
+        async function handleMessage() {
+            const message = chatInput.value.trim();
+            if (message) {
+                // Add user message
+                addMessage(message, true);
+                
+                try {
+                    // Send to server
+                    const response = await fetch('/chatbot', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({ message: message }),
+                    });
+
+                    const data = await response.json();
+                    
+                    // Add bot response
+                    addMessage(data.response, false);
+                } catch (error) {
+                    console.error('Error:', error);
+                    addMessage('Sorry, I encountered an error. Please try again.', false);
+                }
+
+                // Clear input
+                chatInput.value = '';
+            }
+        }
+
+        function addMessage(message, isUser = false) {
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${isUser ? 'user-message' : 'bot-message'}`;
+            messageDiv.textContent = message;
+            chatMessages.appendChild(messageDiv);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
+        sendMessage.addEventListener('click', handleMessage);
+        chatInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                handleMessage();
+            }
+        });
+    </script>
+</body>
+</html>

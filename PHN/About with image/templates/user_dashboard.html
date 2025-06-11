@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CropGuard Dashboard</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/weather-icons/2.0.12/css/weather-icons.min.css">
+    <style>
+        :root {
+            --primary-color: #4CAF50;
+            --secondary-color: #2E7D32;
+        }
+
+        body {
+            position: relative;
+            margin: 0;
+            padding: 0;
+            overflow-x: hidden;
+        }
+        
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('https://wallpaperaccess.com/full/1598228.jpg');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            filter: blur(8px);
+            z-index: -1;
+        }
+
+        .navbar-brand i {
+            color: var(--primary-color);
+            margin-right: 0.5rem;
+        }
+
+        .nav-link.active {
+            color: var(--primary-color) !important;
+            font-weight: 500;
+        }
+
+        .main-content {
+            padding: 2rem;
+        }
+
+        .weather-panel {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-radius: 20px;
+            box-shadow: 25px 25px 40px 0px rgba(0,0,0,0.33);
+            color: #fff;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            overflow: hidden;
+            position: relative;
+            background: linear-gradient(to bottom, #000, #333);
+            transition: background 0.5s ease-in-out;
+        }        
+        
+        .weather-symbol {
+            font-size: 6rem;
+            color: #fff;
+        }        
+
+        .weather-panel .location-date {
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+        }
+        
+        .weather-panel .date {
+            font-size: 1rem;
+            font-weight: normal;
+            margin-top: -0.5rem;
+            color: #ddd;
+        }
+
+        .weather-panel .weather-desc {
+            font-size: 1.2rem;
+            margin-bottom: 1rem;
+        }
+
+        .weather-panel .temperature {
+            font-size: 3rem;
+            font-weight: bold;
+        }
+
+        .stat-card {
+            background: linear-gradient(to bottom, #000, #333);
+            padding: 1.5rem;
+            border-radius: 1rem;
+            box-shadow: 25px 25px 40px 0px rgba(0,0,0,0.33);
+            height: 100%;
+            color: #fff;
+            margin-bottom: 1rem;
+        }
+
+        .stat-card h3 {
+            color: #fff;
+            margin-bottom: 1rem;
+            font-size: 1.1rem;
+        }
+
+        .progress {
+            height: 25px;
+            margin-bottom: 1rem;
+        }
+
+        .irrigation-schedule {
+            background-color: rgba(255, 255, 255, 0.9);
+            border-radius: 10px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .irrigation-time {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.5rem;
+            border-bottom: 1px solid #eee;
+        }
+
+        .fertilizer-card {
+            background-color: rgba(255, 255, 255, 0.9);
+            border-radius: 10px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .fertilizer-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.5rem;
+            border-bottom: 1px solid #eee;
+        }
+
+        .alerts-container {
+            background-color: rgba(255, 255, 255, 0.9);
+            border-radius: 10px;
+            padding: 1rem;
+            margin-top: 2rem;
+        }
+
+        .alert {
+            margin-bottom: 0.5rem;
+        }
+
+        /* New styles for status buttons and indicators */
+        .status-buttons {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .completion-status {
+            display: none;
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            font-weight: 500;
+        }
+
+        .status-complete {
+            background-color: #198754;
+            color: white;
+        }
+
+        .status-incomplete {
+            background-color: #dc3545;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm">
+        <div class="container">
+            <a class="navbar-brand d-flex align-items-center" href="/user_dashboard">
+                <i class="fas fa-leaf fa-lg"></i>
+                <span class="ms-2">CropGuard</span>
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="/user_dashboard">
+                            <i class="fas fa-home me-1"></i>Dashboard
+                        </a>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link" href="#" id="cropsDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="fas fa-seedling me-1"></i>Crops
+                            <i class="fas fa-caret-down"></i>
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="cropsDropdown">
+                            <li><a class="dropdown-item" href="#"><i class="fas fa-carrot me-2"></i>Carrots</a></li>
+                            <li><a class="dropdown-item" href="/sugarcane"><i class="fas fa-seedling me-2"></i>Sugarcane</a></li>
+                            <li><a class="dropdown-item" href="#"><i class="fas fa-leaf me-2"></i>Wheat</a></li>
+                            <li><a class="dropdown-item" href="#"><i class="fas fa-cog me-2"></i>Coming Soon</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                        </ul>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/news">
+                            <i class="fas fa-history me-1"></i>Top News
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/about">
+                            <i class="fas fa-info-circle me-1"></i>About Us
+                        </a>
+                    </li>
+                </ul>
+                <div class="d-flex">
+                    <div class="dropdown">
+                        <a class="btn btn-link text-dark text-decoration-none dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+                            <i class="fas fa-user-circle me-1"></i>User
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end">
+                            <li><a class="dropdown-item" href="/profile"><i class="fas fa-user me-2"></i>Profile</a></li>
+                            <li><a class="dropdown-item" href="/settings"><i class="fas fa-cog me-2"></i>Settings</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="#"><i class="fas fa-sign-out-alt me-2"></i>Logout</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container main-content">
+        <div class="row">
+            <div class="col-md-6">
+                <div class="weather-panel d-flex align-items-center justify-content-between">
+                    <div>
+                        <div class="location-date">
+                            <span id="city-name">Loading...</span>
+                            <div class="date" id="current-date">Loading...</div>
+                        </div>
+                        <div class="weather-desc" id="weather-desc">Loading...</div>
+                        <div class="temperature" id="current-temp">--°</div>
+                    </div>
+                    <div class="weather-symbol" id="weather-symbol">
+                        <i class="wi wi-na"></i>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <div class="stat-card">
+                    <h3>Crop Growth Progress</h3>
+                    <div class="progress">
+                        <div class="progress-bar bg-success" role="progressbar" style="width: 70%;" 
+                             aria-valuenow="70" aria-valuemin="0" aria-valuemax="100">70%</div>
+                    </div>
+                    <div class="d-flex justify-content-between text-white-50">
+                        <span>Planting</span>
+                        <span>Current Stage</span>
+                        <span>Harvest</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row mt-4">
+            <div class="col-md-6">
+                <div class="irrigation-schedule">
+                    <h3 class="text-success mb-3">Irrigation Schedule</h3>
+                    <div class="irrigation-time">
+                        <span>Morning</span>
+                        <span>6:00 AM - 7:00 AM</span>
+                        <div class="status-buttons">
+                            <button class="btn btn-sm btn-success" onclick="updateStatus(this, true)">Yes</button>
+                            <button class="btn btn-sm btn-danger" onclick="updateStatus(this, false)">No</button>
+                        </div>
+                        <span class="completion-status"></span>
+                    </div>
+                    <div class="irrigation-time">
+                        <span>Evening</span>
+                        <span>5:00 PM - 6:00 PM</span>
+                        <div class="status-buttons">
+                            <button class="btn btn-sm btn-success" onclick="updateStatus(this, true)">Yes</button>
+                            <button class="btn btn-sm btn-danger" onclick="updateStatus(this, false)">No</button>
+                        </div>
+                        <span class="completion-status"></span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <div class="fertilizer-card">
+                    <h3 class="text-success mb-3">Fertilization Schedule</h3>
+                    <div class="fertilizer-item">
+                        <span>NPK 20-20-20</span>
+                        <span>Dec 15, 2024</span>
+                        <div class="status-buttons">
+                            <button class="btn btn-sm btn-success" onclick="updateStatus(this, true)">Yes</button>
+                            <button class="btn btn-sm btn-danger" onclick="updateStatus(this, false)">No</button>
+                        </div>
+                        <span class="completion-status"></span>
+                    </div>
+                    <div class="fertilizer-item">
+                        <span>Organic Compost</span>
+                        <span>Dec 10, 2024</span>
+                        <div class="status-buttons">
+                            <button class="btn btn-sm btn-success" onclick="updateStatus(this, true)">Yes</button>
+                            <button class="btn btn-sm btn-danger" onclick="updateStatus(this, false)">No</button>
+                        </div>
+                        <span class="completion-status"></span>
+                    </div>
+                    <div class="fertilizer-item">
+                        <span>Micronutrients Mix</span>
+                        <span>Dec 5, 2024</span>
+                        <div class="status-buttons">
+                            <button class="btn btn-sm btn-success" onclick="updateStatus(this, true)">Yes</button>
+                            <button class="btn btn-sm btn-danger" onclick="updateStatus(this, false)">No</button>
+                        </div>
+                        <span class="completion-status"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="alerts-container">
+            <h3 class="text-success mb-3">Upcoming Events & Alerts</h3>
+            <div class="alert alert-warning">
+                <i class="fas fa-exclamation-triangle me-2"></i>
+                Fertilization scheduled for tomorrow
+            </div>
+            <div class="alert alert-info">
+                <i class="fas fa-info-circle me-2"></i>
+                Irrigation system maintenance needed in 3 days
+            </div>
+            <div class="alert alert-success">
+                <i class="fas fa-check-circle me-2"></i>
+                Crop harvest estimated in 2 weeks
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Function to handle status updates
+        function updateStatus(button, isComplete) {
+            const container = button.closest('.irrigation-time, .fertilizer-item');
+            const buttonsContainer = container.querySelector('.status-buttons');
+            const statusSpan = container.querySelector('.completion-status');
+            
+            // Hide the buttons
+            buttonsContainer.style.display = 'none';
+
+            statusSpan.style.display = 'inline-block';
+            if (isComplete) {
+                statusSpan.textContent = 'Completed';
+                statusSpan.classList.add('status-complete');
+            } else {
+                statusSpan.textContent = 'Not Completed';
+                statusSpan.classList.add('status-incomplete');
+            }
+        }
+
+        // Your existing weather and background update scripts here
+        document.addEventListener('DOMContentLoaded', function() {
+            function updateBackground() {
+                const currentHour = new Date().getHours();
+                const weatherPanel = document.querySelector('.weather-panel');
+                
+                const colorSchemes = {
+                    dawn: 'linear-gradient(to bottom, #FFD194, #D1913C)',
+                    morning: 'linear-gradient(to bottom, #FFEFBA, #FFFFFF)',
+                    noon: 'linear-gradient(to bottom, #87CEEB, #1E90FF)',
+                    evening: 'linear-gradient(to bottom, #FDB99B, #3D4E81)',
+                    dusk: 'linear-gradient(to bottom, #654EA3, #EAAFc8)',
+                    night: 'linear-gradient(to bottom, #2C3E50, #4CA1AF)'
+                };
+    
+                if (currentHour >= 5 && currentHour < 7) {
+                    weatherPanel.style.background = colorSchemes.dawn;
+                } else if (currentHour >= 7 && currentHour < 11) {
+                    weatherPanel.style.background = colorSchemes.morning;
+                } else if (currentHour >= 11 && currentHour < 15) {
+                    weatherPanel.style.background = colorSchemes.noon;
+                } else if (currentHour >= 15 && currentHour < 19) {
+                    weatherPanel.style.background = colorSchemes.evening;
+                } else if (currentHour >= 19 && currentHour < 21) {
+                    weatherPanel.style.background = colorSchemes.dusk;
+                } else {
+                    weatherPanel.style.background = colorSchemes.night;
+                }
+            }
+            updateBackground();
+
+            // Get location and weather
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(
+                    function(position) {
+                        const latitude = position.coords.latitude;
+                        const longitude = position.coords.longitude;
+                        const weatherIcons = {
+                            "Clear": "wi-day-sunny",
+                            "Clouds": "wi-cloudy",
+                            "Rain": "wi-rain",
+                            "Drizzle": "wi-sprinkle",
+                            "Thunderstorm": "wi-thunderstorm",
+                            "Snow": "wi-snow",
+                            "Mist": "wi-fog",
+                            "Haze": "wi-day-haze",
+                            "Smoke": "wi-smoke",
+                            "Dust": "wi-dust",
+                            "Fog": "wi-fog",
+                            "Sand": "wi-sandstorm",
+                            "Ash": "wi-volcano",
+                            "Squall": "wi-strong-wind",
+                            "Tornado": "wi-tornado"
+                        };
+
+                        // Your existing weather fetching code here
+                        fetch(`https://api.openweathermap.org/geo/1.0/reverse?lat=${latitude}&lon=${longitude}&limit=1&appid=9cc32b17eb9445a7669256a9fddd9f01`)
+                            .then(response => response.json())
+                            .then(locationData => {
+                                const cityName = locationData[0].name;
+                                const currentDate = new Date().toLocaleDateString('en-US', {
+                                    month: 'long',
+                                    day: 'numeric',
+                                    year: 'numeric'
+                                });
+                                document.getElementById('city-name').textContent = cityName;
+                                document.getElementById('current-date').textContent = currentDate;
+                            })
+                            .catch(err => {
+                                console.error('Error fetching location name:', err);
+                                document.getElementById('city-name').textContent = 'Current Location';
+                                document.getElementById('current-date').textContent = 
+                                    new Date().toLocaleDateString('en-US', {
+                                        month: 'long',
+                                        day: 'numeric',
+                                        year: 'numeric'
+                                    });
+                            });
+
+                        fetch('/update_location', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                            },
+                            body: JSON.stringify({ latitude, longitude }),
+                        })
+                        .then(response => {
+                            if (!response.ok) {
+                                throw new Error('Network response was not ok');
+                            }
+                            return response.json();
+                        })
+                        .then(data => {
+                            if (data.weather) {
+                                const weatherDescription = data.weather.description;
+                                const weatherMain = data.weather.main;
+                                
+                                const tempElement = document.getElementById('current-temp');
+                                tempElement.textContent = `${Math.round(data.weather.temperature)}°C`;
+                                
+                                const descElement = document.getElementById('weather-desc');
+                                descElement.textContent = weatherDescription;
+                                
+                                const iconElement = document.getElementById('weather-symbol');
+                                const iconClass = weatherIcons[weatherMain] || "wi-na";
+                                iconElement.innerHTML = `<i class="wi ${iconClass}"></i>`;
+                            }
+                        })
+                        .catch(err => {
+                            console.error('Error fetching weather data:', err);
+                            document.getElementById('current-temp').textContent = 'N/A';
+                            document.getElementById('weather-desc').textContent = 'Weather data unavailable';
+                            document.getElementById('weather-symbol').innerHTML = '<i class="wi wi-na"></i>';
+                        });
+                    },
+                    function(error) {
+                        console.error('Error fetching location:', error);
+                        document.getElementById('location-date').textContent = 'Location access denied';
+                    }
+                );
+            }
+        });
+    </script>
+</body>
+</html>

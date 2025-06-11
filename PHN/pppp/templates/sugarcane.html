@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <script type="text/javascript">
+        // Create a promise to track Google Translate script loading
+        let googleTranslateScriptPromise = null;
+    
+        function loadGoogleTranslateScript() {
+            if (!googleTranslateScriptPromise) {
+                googleTranslateScriptPromise = new Promise((resolve, reject) => {
+                    const script = document.createElement('script');
+                    script.src = '//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit';
+                    script.async = true;
+                    script.defer = true;
+                    
+                    script.onload = () => {
+                        // Small delay to ensure the API is fully loaded
+                        setTimeout(resolve, 100);
+                    };
+                    script.onerror = reject;
+                    
+                    document.head.appendChild(script);
+                });
+            }
+            return googleTranslateScriptPromise;
+        }
+    
+        // Modified initialization function
+        function googleTranslateElementInit() {
+            // Check if the element exists
+            const translateElement = document.getElementById('google_translate_element');
+            if (!translateElement) return;
+    
+            // Check if translate widget is already initialized
+            if (translateElement.childNodes.length > 0) return;
+    
+            new google.translate.TranslateElement(
+                {
+                    pageLanguage: 'en',
+                    includedLanguages: 'en,hi,mr',
+                    layout: google.translate.TranslateElement.InlineLayout.SIMPLE,
+                    autoDisplay: false,
+                },
+                'google_translate_element'
+            );
+    
+            // Initialize language preference handling
+            storeLanguagePreference();
+        }
+    
+        // Modified storage function with error handling
+        function storeLanguagePreference() {
+            try {
+                const select = document.querySelector('.goog-te-combo');
+                if (select) {
+                    // Get stored preference
+                    const storedLang = localStorage.getItem('preferred-language');
+                    if (storedLang) {
+                        select.value = storedLang;
+                        // Trigger change event to apply the stored language
+                        const event = new Event('change');
+                        select.dispatchEvent(event);
+                    }
+    
+                    select.addEventListener('change', function() {
+                        try {
+                            localStorage.setItem('preferred-language', this.value);
+                        } catch (e) {
+                            console.error('Error storing language preference:', e);
+                        }
+                    });
+                }
+            } catch (e) {
+                console.error('Error in storeLanguagePreference:', e);
+            }
+        }
+    
+        // Function to initialize translation
+        function initializeTranslation() {
+            // Load jQuery first (if not already loaded)
+            if (typeof jQuery === 'undefined') {
+                const jqueryScript = document.createElement('script');
+                jqueryScript.src = 'https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js';
+                jqueryScript.onload = () => loadGoogleTranslateScript();
+                document.head.appendChild(jqueryScript);
+            } else {
+                loadGoogleTranslateScript();
+            }
+        }
+    
+        // Call initialization when DOM is ready
+        document.addEventListener('DOMContentLoaded', initializeTranslation);
+    
+        // Backup initialization for cases where DOMContentLoaded might have already fired
+        if (document.readyState === 'complete' || document.readyState === 'interactive') {
+            initializeTranslation();
+        }
+    </script> 
+
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sugarcane Analysis - CropGuard</title>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #4CAF50;
+            --secondary-color: #2E7D32;
+        }
+
+        body {
+            position: relative;
+            margin: 0;
+            padding: 0;
+            overflow: hidden; /* Ensures no scrolling issues */
+        }
+        
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('static/images/op2.jpg');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            filter: blur(8px); /* Applies the blur to the background */
+            z-index: -1; /* Ensures it stays behind all content */
+        }
+        
+
+        .navbar-brand i {
+            color: var(--primary-color);
+            margin-right: 0.5rem;
+        }
+
+        .nav-link.active {
+            color: var(--primary-color) !important;
+            font-weight: 500;
+        }
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('/static/images/op2.jpg');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            filter: blur(8px); /* Applies the blur to the background */
+            z-index: -1; /* Ensures it stays behind all content */
+        }
+
+        .main-content {
+            padding: 2rem;
+        }
+
+        .upload-section {
+            background: white;
+            padding: 2rem;
+            border-radius: 1rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .upload-box {
+            border: 2px dashed var(--primary-color);
+            border-radius: 0.5rem;
+            padding: 2rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .upload-box:hover {
+            background-color: rgba(76, 175, 80, 0.1);
+        }
+
+        .preview-section {
+            background: white;
+            padding: 2rem;
+            border-radius: 1rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            display: none;
+        }
+
+        .preview-image {
+            max-width: 100%;
+            max-height: 400px;
+            margin-bottom: 1rem;
+        }
+
+        .analysis-result {
+            background: #f8f9fa;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            margin-top: 1rem;
+        }
+ 
+
+/* Updated translation-related styles */
+.goog-te-banner-frame.skiptranslate {
+            display: none !important;
+        }
+        
+        .goog-te-gadget {
+            font-family: inherit !important;
+            color: transparent !important;
+        }
+        
+        .goog-te-gadget .goog-te-combo {
+            appearance: none;
+            -webkit-appearance: none;
+            padding: 8px 30px 8px 12px;
+            border-radius: 6px;
+            border: 1px solid #e0e0e0;
+            color: #333;
+            background: white;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s ease;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%234CAF50' viewBox='0 0 16 16'%3E%3Cpath d='M7.247 11.14L2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: calc(100% - 8px) center;
+            min-width: 160px;
+        }
+        
+        .goog-te-gadget .goog-te-combo:hover {
+            border-color: var(--primary-color);
+            box-shadow: 0 2px 4px rgba(76, 175, 80, 0.1);
+        }
+        
+        .goog-te-gadget .goog-te-combo:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.2);
+        }
+
+        .translate-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 4px 8px;
+            border-radius: 6px;
+            background: rgba(76, 175, 80, 0.1);
+            margin-right: 1rem;
+        }
+
+       
+
+
+
+
+
+
+
+
+    </style>
+</head>
+
+
+<nav class="navbar navbar-expand-lg navbar-light  ">
+    <div class="container">
+        <a class="navbar-brand d-flex align-items-center" href="/user_dashboard">
+            <i class="fas fa-leaf fa-lg"></i>
+            <span class="ms-2">CropGuard</span>
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav me-auto">
+                <li class="nav-item">
+                    <a class="nav-link active" href="/user_dashboard">
+                        <i class="fas fa-home me-1"></i>Dashboard
+                    </a>
+                </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link" href="#" id="cropsDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        <i class="fas fa-seedling me-1"></i>Crops
+                        <i class="fas fa-caret-down"></i>
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="cropsDropdown">
+                        <li><a class="dropdown-item" href="#"><i class="fas fa-carrot me-2"></i>Carrots</a></li>
+                        <li><a class="dropdown-item" href="/sugarcane"><i class="fas fa-seedling me-2"></i>Sugarcane</a></li>
+                        <li><a class="dropdown-item" href="#"><i class="fas fa-leaf me-2"></i>Wheat</a></li>
+                        <li><a class="dropdown-item" href="#"><i class="fas fa-cog me-2"></i>Coming Soon</a></li>
+                        <li><hr class="dropdown-divider"></li>
+                    </ul>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/news">
+                        <i class="fas fa-history me-1"></i>Top News
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/chatbot">
+                        <i class="fas fa-comments me-1"></i>Chat Assistance
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/about">
+                        <i class="fas fa-info-circle me-1"></i>About Us
+                    </a>
+                </li>
+               
+            </ul>
+            <div class="translate-wrapper">
+                <i class="fas fa-globe"></i>
+                <div id="google_translate_element"></div>
+            </div>
+            <div class="d-flex">
+                <div class="dropdown">
+                    <a class="dropdown-item" href="/logout"><i class="fas fa-sign-out-alt me-2"></i>Logout</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</nav>
+
+
+
+
+    <!-- Main Content -->
+    <div class="container main-content">
+        <div class="row mb-4">
+            <div class="col">
+                <h1 class="h2">Sugarcane Analysis</h1>
+                <p class="text-muted">Upload images of sugarcane leaves for detailed analysis</p>
+            </div>
+        </div>
+
+        <div class="upload-section">
+            <h2 class="h4 mb-3">Upload Image</h2>
+            <div class="upload-box" onclick="document.getElementById('fileInput').click()">
+                <i class="fas fa-cloud-upload-alt fa-3x mb-3" style="color: var(--primary-color)"></i>
+                <p class="mb-0">Click or drag and drop your image here</p>
+                <small class="text-muted d-block mt-2">Supported formats: JPG, PNG (Max size: 5MB)</small>
+                <input type="file" id="fileInput" hidden accept="image/*">
+            </div>
+        </div>
+
+        <div class="preview-section" id="previewSection">
+            <h2 class="h4 mb-3">Image Analysis</h2>
+            <div class="row">
+                <div class="col-md-6">
+                    <img id="previewImage" class="preview-image" src="" alt="Preview">
+                </div>
+                <div class="col-md-6">
+                    <div class="analysis-result">
+                        <h3 class="h5">Analysis Results</h3>
+                        <div id="analysisContent">
+                            <!-- Analysis results will be displayed here -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
+    <script>
+
+        
+        // Google Translate initialization
+        function googleTranslateElementInit() {
+            new google.translate.TranslateElement(
+                {
+                    pageLanguage: 'en',
+                    includedLanguages: 'en,hi,mr', // English, Hindi, Marathi
+                    layout: google.translate.TranslateElement.InlineLayout.SIMPLE,
+                    autoDisplay: false,
+                },
+                'google_translate_element'
+            );
+        }
+
+        // Store language preference
+        function storeLanguagePreference() {
+            const select = document.querySelector('.goog-te-combo');
+            if (select) {
+                select.addEventListener('change', function() {
+                    localStorage.setItem('preferred-language', this.value);
+                });
+            }
+        }
+
+
+
+
+
+        const fileInput = document.getElementById('fileInput');
+        const previewSection = document.getElementById('previewSection');
+        const previewImage = document.getElementById('previewImage');
+        const analysisContent = document.getElementById('analysisContent');
+    
+        fileInput.addEventListener('change', function (e) {
+            if (e.target.files.length > 0) {
+                const file = e.target.files[0];
+                
+                // Show preview
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    previewImage.src = e.target.result;
+                    previewSection.style.display = 'block';
+                    
+                    // Show loading indicator
+                    analysisContent.innerHTML = `
+                        <div class="d-flex align-items-center mb-3">
+                            <div class="spinner-border text-success me-2" role="status">
+                                <span class="visually-hidden">Analyzing...</span>
+                            </div>
+                            <span>Analyzing image...</span>
+                        </div>
+                    `;
+    
+                    // Prepare form data for upload
+                    const formData = new FormData();
+                    formData.append('image', file);
+    
+                    // Send file to the server for analysis
+                    fetch('/detect', {
+                        method: 'POST',
+                        body: formData
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.error) {
+                            analysisContent.innerHTML = `
+                                <p class="text-danger"><strong>Error:</strong> ${data.error}</p>
+                            `;
+                        } else {
+                            const resultText = data.result;
+                            const botResponse = data.bot_response || "No recommendations available.";
+                            
+                            analysisContent.innerHTML = `
+                                <p class="mb-2"><strong>Result:</strong> ${resultText}</p>
+                                <p class="mb-2"><strong>Chatbot Recommendation:</strong> ${botResponse}</p>
+                            `;
+                        }
+                    })
+                    .catch(error => {
+                        analysisContent.innerHTML = `
+                            <p class="text-danger"><strong>Error:</strong> Unable to analyze the image. Please try again.</p>
+                        `;
+                    });
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+    </script>    
+</body>
+</html>

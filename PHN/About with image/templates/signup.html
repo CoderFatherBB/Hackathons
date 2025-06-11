@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CropGuard - Create Account</title>
+    <link rel="stylesheet" href="/static/css/styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <div class="login-page">
+        <!-- Left Section with Signup Form -->
+        <div class="login-section">
+            <div class="login-content">
+                <div class="brand">
+                    <div class="logo">
+                        <i class="fas fa-leaf"></i>
+                        <span>CropGuard</span>
+                    </div>
+                </div>
+
+                <div class="login-form-container">
+                    <h1>Create Account</h1>
+                    <p class="subtitle">Join thousands of farmers using smart disease detection</p>
+
+                    <form id="signupForm" class="login-form">
+                        <div class="name-group">
+                            <div class="input-group">
+                                <i class="fas fa-user"></i>
+                                <input type="text" id="firstName" placeholder="First Name" required>
+                            </div>
+                            <div class="input-group">
+                                <i class="fas fa-user"></i>
+                                <input type="text" id="lastName" placeholder="Last Name" required>
+                            </div>
+                        </div>
+
+                        <div class="input-group">
+                            <i class="fas fa-envelope"></i>
+                            <input type="email" id="email" placeholder="Email Address" required>
+                        </div>
+
+                        <div class="input-group">
+                            <i class="fas fa-id-card"></i>
+                            <input type="text" id="username" placeholder="Username" required>
+                        </div>
+
+                        <div class="input-group">
+                            <i class="fas fa-lock"></i>
+                            <input type="password" id="password" placeholder="Password" required>
+                            <div class="password-strength"></div>
+                        </div>
+
+                        <div class="input-group">
+                            <i class="fas fa-lock"></i>
+                            <input type="password" id="confirmPassword" placeholder="Confirm Password" required>
+                        </div>
+
+                        <div class="terms-group">
+                            <label class="remember-me">
+                                <input type="checkbox" required>
+                                <span>I agree to the <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a></span>
+                            </label>
+                        </div>
+
+                        <button type="submit">Create Account</button>
+                    </form>
+
+                    <p class="signup-link">
+                        Already have an account? <a href="/">Login here</a>
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Section with Info -->
+        <div class="info-section">
+            <div class="overlay"></div>
+            <div class="info-content">
+                <h2>Start Protecting Your Crops Today</h2>
+                <div class="features">
+                    <div class="feature-item">
+                        <i class="fas fa-shield-alt"></i>
+                        <div class="feature-text">
+                            <h3>Early Detection</h3>
+                            <p>Identify crop diseases before they spread and cause significant damage</p>
+                        </div>
+                    </div>
+                    <div class="feature-item">
+                        <i class="fas fa-chart-line"></i>
+                        <div class="feature-text">
+                            <h3>Yield Optimization</h3>
+                            <p>Improve crop yields with timely disease detection and treatment</p>
+                        </div>
+                    </div>
+                    <div class="feature-item">
+                        <i class="fas fa-book"></i>
+                        <div class="feature-text">
+                            <h3>Knowledge Base</h3>
+                            <p>Access comprehensive information about crop diseases and treatments</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="/static/js/signup.js"></script>
+</body>
+</html>
