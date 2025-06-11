@@ -1,0 +1,82 @@
+# "The Second Mind" - Research Agent System Code Analysis
+
+This code implements a multi-agent research system that fetches information from the web, analyzes it, and iteratively refines findings through multiple cycles - exactly matching the requirements of "The Second Mind" problem.
+
+## Core Components and Workflow
+
+1. **Supervisor Agent**: 
+   - Acts as the central coordinator managing the entire research process
+   - Uses a LLaMA 3.3 70B model from Groq for reasoning
+   - Maintains a persistent memory of past research
+   - Orchestrates interactions between specialized agents
+
+2. **Research Memory**:
+   - Data structure storing query, hypothesis, score, and web data
+   - Persisted to disk as JSON for long-term retention
+   - Allows system to recall and build upon past research
+
+3. **Specialized Agents (Tools)**:
+   - `web_search`: Generation agent that retrieves real-time web data using Tavily search API
+   - `analyze_findings`: Reflection agent that extracts key concepts and evaluates coherence
+   - `rank_sources`: Ranking agent that scores sources based on multiple criteria
+   - `evolve_hypothesis`: Evolution agent that refines the hypothesis based on findings
+   - `check_proximity`: Proximity agent that links current research to past queries
+   - `deep_research`: Specialized agent for targeted in-depth research
+   - `get_feedback`: Agent for incorporating user feedback
+   - Plus a `meta-review` process that evaluates the overall research
+
+4. **Execution Flow**:
+   - System runs multiple research iterations (default is 3)
+   - In each iteration, it performs web search, analyzes findings, ranks sources
+   - Results are stored in memory for future reference
+   - Final meta-review synthesizes findings across all iterations
+   - User can provide feedback to improve results or request deep research on specific topics
+
+## Key Technical Implementations
+
+1. **Web Data Extraction**:
+   - Uses Tavily search API for real-time web data retrieval
+   - Categorizes sources as "academic" or "general" based on domain
+   - Extracts publication dates and citation counts from content
+   - Performs multiple searches with different query formulations
+
+2. **Source Ranking**:
+   - Implements a sophisticated multi-factor weighting system
+   - Considers relevance (35%), source type (20%), recency (20%), citations (15%), content quality (10%)
+   - Academic sources are prioritized over general sources
+   - Recent publications are scored higher than older ones
+
+3. **Memory and Retrieval**:
+   - Stores research history in a JSON file
+   - Limits history to 10 entries to prevent unbounded growth
+   - Implements proximity checking to relate new queries to past research
+   - Optimizes storage by keeping compact versions of results
+
+4. **Iterative Improvement**:
+   - Performs multiple research cycles with refinement
+   - Incorporates user feedback into the research process
+   - Each iteration builds upon findings from previous cycles
+   - Meta-review synthesizes findings across all iterations
+
+5. **Deep Research**:
+   - Allows focused research on specific topics
+   - Generates specialized insights with applications and connections
+   - Synthesizes findings across multiple topics
+   - Creates cross-topic insights and recommendations
+
+6. **Error Handling**:
+   - Robust error handling throughout the system
+   - Graceful fallbacks when components fail
+   - Detailed logging for troubleshooting
+   - Traceback capture for debugging
+
+## User Interface
+
+The main function provides a simple text-based interface where:
+1. User enters a research query
+2. System performs iterative research with web data extraction
+3. Detailed results are displayed for each research cycle 
+4. A meta-review summarizes findings across all cycles
+5. User can provide feedback, request deep research, reset, or exit
+
+This implementation fulfills all the requirements from the problem statement, creating a system of specialized agents that learn from interactions, extract web data, and improve iteratively while maintaining a memory of past research.

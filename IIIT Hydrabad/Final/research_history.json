@@ -1,0 +1,36 @@
+[
+  {
+    "query": "MCP Model Context Protocol ",
+    "timestamp": "2025-04-10T18:05:40.224209",
+    "key_concepts": [
+      "Model Context Protocol (MCP)",
+      "AI integration",
+      "standardized protocol",
+      "client-server architecture",
+      "JSON-RPC 2.0",
+      "security",
+      "observability",
+      "discovery",
+      "security threats",
+      "context exchange"
+    ],
+    "top_sources": [
+      {
+        "title": "Model Context Protocol (MCP): Landscape, Security Threats ...",
+        "url": "https://arxiv.org/abs/2503.23278",
+        "score": 0.872
+      },
+      {
+        "title": "[PDF] Model Context Protocol (MCP): Landscape, Security Threats, and ...",
+        "url": "https://arxiv.org/pdf/2503.23278",
+        "score": 0.8524999999999999
+      },
+      {
+        "title": "Model Context Protocol (MCP): Landscape, Security Threats ...",
+        "url": "https://arxiv.org/abs/2503.23278",
+        "score": 0.8484499999999999
+      }
+    ],
+    "summary": "The understanding of the Model Context Protocol (MCP) evolved across iterations from recognizing it as an emerging open standard for integrating AI assistants with external data sources to a rapidly evolving standard that simplifies AI model integration. The initial focus on standardization and security threats expanded to include context exchange, client-server architecture, and real-world applications. The protocol's importance in context-aware systems, its potential for enhancement with machi"
+  }
+]

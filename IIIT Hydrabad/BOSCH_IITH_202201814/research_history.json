@@ -1,0 +1,96 @@
+[
+  {
+    "query": "Deep learning",
+    "timestamp": "2025-04-05T09:42:28.168211",
+    "key_concepts": [
+      "Deep Learning",
+      "Neural Networks",
+      "Convolutional Neural Networks (CNNs)",
+      "Self-Supervised Learning",
+      "High-Performance NLP Models",
+      "Vision Transformer",
+      "Hybrid Model Integration",
+      "Neuroscience-Based Deep Learning",
+      "Convolutional Neural Networks (CNN)",
+      "Techniques"
+    ],
+    "top_sources": [
+      {
+        "title": "Deep Learning: A Comprehensive Overview on Techniques ...",
+        "url": "https://link.springer.com/article/10.1007/s42979-021-00815-1",
+        "score": 0.9325
+      },
+      {
+        "title": "Deep Learning: A Comprehensive Overview on Techniques ...",
+        "url": "https://link.springer.com/article/10.1007/s42979-021-00815-1",
+        "score": 0.9265500000000001
+      },
+      {
+        "title": "Deep Learning: A Comprehensive Overview on Techniques ...",
+        "url": "https://link.springer.com/article/10.1007/s42979-021-00815-1",
+        "score": 0.9265500000000001
+      }
+    ],
+    "summary": "The understanding of deep learning evolved across iterations, with a growing emphasis on its applications, techniques, and taxonomy. The initial iteration focused on the fundamentals of deep learning, including neural networks and convolutional neural networks. The subsequent iterations delved deeper into the current progress, challenges, and future directions of deep learning, highlighting its significance in image and video data analysis, object detection, and classification. The research cons"
+  },
+  {
+    "query": "Reinforcement Learning",
+    "timestamp": "2025-04-05T09:47:01.049455",
+    "key_concepts": [
+      "Reinforcement Learning",
+      "Deep Reinforcement Learning",
+      "Artificial Intelligence",
+      "Machine Learning",
+      "Applications of Reinforcement Learning"
+    ],
+    "top_sources": [
+      {
+        "title": "[2408.07712] Introduction to Reinforcement Learning",
+        "url": "https://arxiv.org/abs/2408.07712",
+        "score": 0.872
+      },
+      {
+        "title": "Reinforcement learning model, algorithms and its application",
+        "url": "http://ieeexplore.ieee.org/document/6025669/",
+        "score": 0.87
+      },
+      {
+        "title": "Reinforcement learning model, algorithms and its application",
+        "url": "http://ieeexplore.ieee.org/document/6025669/",
+        "score": 0.8524999999999999
+      }
+    ],
+    "summary": "The research iterations demonstrate a growing understanding of Reinforcement Learning (RL) and its applications. Across the cycles, the analysis summaries suggest a consistent interest in RL, with a focus on its models, algorithms, and applications. The top sources provide a comprehensive guide to RL techniques, emerging trends, and future directions. The key insights from the top sources highlight the importance of fundamentals, deep learning, and real-world applications. The evolution of under"
+  },
+  {
+    "query": "deep learning",
+    "timestamp": "2025-04-05T09:59:11.594383",
+    "key_concepts": [
+      "Deep Learning",
+      "Neural Networks",
+      "CNN Architectures",
+      "Applications of Deep Learning",
+      "Research Directions in Deep Learning",
+      "Challenges in Deep Learning",
+      "Future Directions of Deep Learning"
+    ],
+    "top_sources": [
+      {
+        "title": "Deep Learning: A Comprehensive Overview on Techniques ...",
+        "url": "https://link.springer.com/article/10.1007/s42979-021-00815-1",
+        "score": 0.9395
+      },
+      {
+        "title": "Deep Learning: A Comprehensive Overview on Techniques ...",
+        "url": "https://link.springer.com/article/10.1007/s42979-021-00815-1",
+        "score": 0.9325
+      },
+      {
+        "title": "Deep Learning: A Comprehensive Overview on Techniques ...",
+        "url": "https://link.springer.com/article/10.1007/s42979-021-00815-1",
+        "score": 0.9265500000000001
+      }
+    ],
+    "summary": "Across three iterations, the understanding of deep learning evolved from a broad overview of techniques and applications to a more nuanced exploration of challenges, future directions, and specific architectures such as CNN. The importance of comprehensive introductions to deep learning, recent advancements, and technical details on implementing new models remained consistent. However, the focus shifted towards understanding foundational concepts, state-of-the-art techniques, and best practices "
+  }
+]
