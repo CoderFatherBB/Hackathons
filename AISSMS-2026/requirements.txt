@@ -1,0 +1,14 @@
+fastapi
+uvicorn
+sqlalchemy>=2.0
+psycopg2-binary
+pydantic>=2.0
+redis
+celery
+boto3
+requests
+python-dotenv
+langchain-groq
+python-multipart
+pytest
+pytest-cov
