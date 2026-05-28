@@ -1,5 +1,5 @@
 <div align="center">
-  <h1 align="center">Iiit Hydrabad</h1>
+  <h1 align="center">Amazon</h1>
   <p align="center">
     <strong>Project from the <a href="https://github.com/CoderFatherBB/Hackathons">Hackathons</a> Repository</strong>
   </p>
@@ -9,18 +9,9 @@
 
 ## 📖 Overview
 
-Welcome to the **Iiit Hydrabad** project! This directory contains the specific source code, resources, and implementation details for this project.
+Welcome to the **Amazon** project! This directory contains the specific source code, resources, and implementation details for this project.
 
-### Existing Documentation\n\n# IIIT Hyderabad Hackathon Projects
 
-This folder contains projects, submissions, and resources related to hackathons and challenges at IIIT Hyderabad. It includes:
-
-- **BOSCH_IITH_202201814/**: Bosch hackathon project with code, requirements, and results.
-- **Final/**: Final submissions, screenshots, and documentation for a specific challenge.
-- **Agent.py, Agent.txt**: Scripts and documentation for agent-based experiments.
-- **research_history.json**: Data and logs related to research progress.
-
-Each subfolder contains its own README.md for more details. Please ensure no sensitive data is present before publishing.\n
 
 ---
 
@@ -34,7 +25,7 @@ Make sure you have the necessary environment setup to run or build this project.
 ### Running the Code
 1. Ensure you are in the project directory:
    ```bash
-   cd "IIIT Hydrabad"
+   cd "Amazon"
    ```
 2. Execute the main scripts or compile the source code according to the language standards.
 
