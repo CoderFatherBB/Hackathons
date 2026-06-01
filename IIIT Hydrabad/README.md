@@ -1,17 +1,8 @@
-<div align="center">
-  <h1 align="center">Iiit Hydrabad</h1>
-  <p align="center">
-    <strong>Project from the <a href="https://github.com/CoderFatherBB/Hackathons">Hackathons</a> Repository</strong>
-  </p>
-</div>
+# Iiit Hydrabad
 
----
+Part of [`Hackathons`](https://github.com/CoderFatherBB/Hackathons) at `IIIT Hydrabad`.
 
-## 📖 Overview
-
-Welcome to the **Iiit Hydrabad** project! This directory contains the specific source code, resources, and implementation details for this project.
-
-### Existing Documentation\n\n# IIIT Hyderabad Hackathon Projects
+# IIIT Hyderabad Hackathon Projects
 
 This folder contains projects, submissions, and resources related to hackathons and challenges at IIIT Hyderabad. It includes:
 
@@ -20,34 +11,4 @@ This folder contains projects, submissions, and resources related to hackathons 
 - **Agent.py, Agent.txt**: Scripts and documentation for agent-based experiments.
 - **research_history.json**: Data and logs related to research progress.
 
-Each subfolder contains its own README.md for more details. Please ensure no sensitive data is present before publishing.\n
-
----
-
-## 🚀 Getting Started
-
-### Prerequisites
-Make sure you have the necessary environment setup to run or build this project. Depending on the repository's technology stack, you may need:
-- Standard language compilers/interpreters (e.g., Python, C++, Java).
-- Required frameworks and libraries as per the codebase.
-
-### Running the Code
-1. Ensure you are in the project directory:
-   ```bash
-   cd "IIIT Hydrabad"
-   ```
-2. Execute the main scripts or compile the source code according to the language standards.
-
----
-
-## 👤 Author
-
-**Bhavin Baldota**
-
-- LinkedIn: [Bhavin Baldota](https://www.linkedin.com/in/bhavin-baldota-103553234/)
-- GitHub: [@CoderFatherBB](https://github.com/CoderFatherBB)
-
----
-<div align="center">
-  <sub>Made with ❤️ by Bhavin Baldota</sub>
-</div>
+Each subfolder contains its own README.md for more details. Please ensure no sensitive data is present before publishing.
